@@ -11,12 +11,11 @@ export class EmailService {
       port: 465,
       secure: true, // true para 465, false para otros puertos
       auth: {
-        user: 'klowhubnc@gmail.com', // tu correo electrónico
-        pass: 'mtpi xlju akks wqwe', // tu contraseña o app password
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
       },
     });
   }
-
   async sendRecoveryEmail(to: string, code: string) {
     const mailOptions = {
       from: '"Nombre del Remitente" <tu_correo@gmail.com>',
