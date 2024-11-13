@@ -20,6 +20,6 @@ import { ConfigService } from '@nestjs/config';
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
   ],
   controllers: [UsersController],
-  providers: [UsersService,EmailService,AuthService],
+  providers: [UsersService, EmailService, AuthService],
 })
 export class UsersModule {}
