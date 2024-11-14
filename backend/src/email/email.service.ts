@@ -26,4 +26,14 @@ export class EmailService {
 
     return await this.transporter.sendMail(mailOptions);
   }
+
+  async sendVerificationEmail(to: string, code: string) {
+    const mailOptions = {
+      from: 'KlowHub',
+      to,
+      subject: 'Verificación de correo',
+      text: `Tu código de verificación es: ${code}`,
+    };
+    return await this.transporter.sendMail(mailOptions);
+  }
 }

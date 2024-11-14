@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -17,6 +25,7 @@ import {
 import { RolesGuard } from './guard/roles.guard';
 import { Roles } from './decorators/roles.decorator';
 import { AuthGuard } from './guard/auth.guard';
+import { ValidateEmailCode } from './dto/validate-emailCode';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -30,7 +39,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 409, description: 'User already exists.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
-  @Post()
+  @Post('register')
   create(@Body() createAuthDto: CreateUserDto) {
     return this.authService.create(createAuthDto);
   }
@@ -52,21 +61,51 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Token successfully verified.' })
   @ApiResponse({ status: 401, description: 'Invalid token or unauthorized.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
-  @Get('verify')
+  @Get('verify-token')
   async verify(@Req() request: RequestWithUser) {
     return this.authService.verify(request);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Sends a code to the user to validate their email address ',
+  })
+  @ApiResponse({ status: 200, description: 'Code successfully send.' })
+  @ApiResponse({ status: 401, description: 'Invalid code' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  @UseGuards(AuthGuard)
+  @Post('sendcodeverifyemail')
+  async sendCodeVerifyEmail(@Req() request: Request) {
+    console.log(request);
+    return this.authService.sendCodeVerifyEmail(request);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Sends a code to the user to validate their email address ',
+  })
+  @ApiResponse({ status: 200, description: 'Code successfully send.' })
+  @ApiResponse({ status: 401, description: 'Invalid code' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  @UseGuards(AuthGuard)
+  @Post('validatecodefromemail')
+  async validateCodeFromEmail(
+    @Req() request: Request,
+    @Body() code: ValidateEmailCode,
+  ) {
+    return this.authService.validateCodeFromEmail(request, code);
   }
 
   @ApiOperation({ summary: 'Send a recovery email for password reset' })
   @ApiResponse({ status: 200, description: 'Recovery email sent.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
-  @Post('forgotpassword')
+  @Post('password/forgot')
   async forgotPassword(@Body() email: ResetEmail) {
     return this.authService.forgotPassword(email);
   }
 
-  @Post('validatecode')
+  @Post('password/validate-code')
   @ApiOperation({ summary: 'Validate recovery code' })
   @ApiResponse({ status: 200, description: 'Recovery code is valid.' })
   @ApiResponse({ status: 400, description: 'Invalid recovery code.' })
@@ -75,15 +114,14 @@ export class AuthController {
   async validateCode(@Body() emailCode: ValidateCode) {
     return this.authService.validateRecoveryCode(emailCode);
   }
-  
+
   @ApiOperation({ summary: 'Reset password' })
   @ApiResponse({ status: 200, description: 'Password updated successfully.' })
   @ApiResponse({ status: 404, description: 'Invalid email.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   @ApiBody({ type: UpdateAuthDto })
-  @Post('resetpassword')
+  @Post('password/reset')
   async resetPassword(@Body() resetPassword: UpdateAuthDto) {
     return this.authService.resetPassword(resetPassword);
   }
-
 }
