@@ -55,7 +55,7 @@ export class UsersService {
     }
   }
 
-  async uploadImage (file: Express.Multer.File, user: UserResponseDto) {
+  async uploadImage(file: Express.Multer.File, user: UserResponseDto) {
     if (!file) {
       throw new HttpException('Please upload file', 400);
     }

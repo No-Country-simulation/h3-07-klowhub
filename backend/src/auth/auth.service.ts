@@ -114,6 +114,38 @@ export class AuthService {
     }
   }
 
+  async verifyEmail(request: any) {
+    try {
+      const authHeader = request.headers.authorization;
+      if (!authHeader) {
+        throw new UnauthorizedException('Unauthorized');
+      }
+
+      const token = authHeader.split(' ')[1];
+      if (!token) {
+        throw new UnauthorizedException('Unauthorized');
+      }
+
+      const decodedToken = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
+      });
+      const userFound = await this.userModel.findOne({ _id: decodedToken._id });
+
+      if (!userFound) {
+        throw new UnauthorizedException('Unauthorized');
+      }
+
+      return {
+        _id: userFound._id,
+        email: userFound.email,
+        role: userFound.role,
+        name: userFound.username,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
   async forgotPassword(email: ResetEmail) {
     try {
       const recoveryCode = uuidv4().substring(0, 6);
