@@ -4,4 +4,5 @@ export class UserResponseDto {
   role: string;
   username: string;
   email: string;
+  profileImage: string;
 }

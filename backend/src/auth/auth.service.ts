@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from 'src/email/email.service';
 import { ResetEmail } from './dto/recovery-email.dto';
 import { ValidateCode } from './dto/validate-code.dto';
+import { ValidateEmailCode } from './dto/validate-emailCode';
 
 @Injectable()
 export class AuthService {
@@ -75,6 +76,7 @@ export class AuthService {
         role: user.role,
         email: user.email,
         username: user.username,
+        profileImage: user.profileImage,
       };
     } catch (error) {
       throw new HttpException(error.message, 500);
@@ -114,38 +116,52 @@ export class AuthService {
     }
   }
 
-  async verifyEmail(request: any) {
+  async sendCodeVerifyEmail(request: any) {
     try {
-      const authHeader = request.headers.authorization;
-      if (!authHeader) {
-        throw new UnauthorizedException('Unauthorized');
+      const user = await this.userModel.findOne({ email: request.user.email });
+      if (!user) {
+        throw new HttpException('Invalid code', 401);
       }
+      const verifyEmailCode = uuidv4().substring(0, 4);
 
-      const token = authHeader.split(' ')[1];
-      if (!token) {
-        throw new UnauthorizedException('Unauthorized');
-      }
+      user.emailVerificationToken = verifyEmailCode;
+      await user.save();
 
-      const decodedToken = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET,
-      });
-      const userFound = await this.userModel.findOne({ _id: decodedToken._id });
-
-      if (!userFound) {
-        throw new UnauthorizedException('Unauthorized');
-      }
-
+      await this.emailService.sendVerificationEmail(
+        request.user.email,
+        verifyEmailCode,
+      );
       return {
-        _id: userFound._id,
-        email: userFound.email,
-        role: userFound.role,
-        name: userFound.username,
+        message: 'Email sent',
       };
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
+  async validateCodeFromEmail(request: any, code: ValidateEmailCode) {
+    try {
+      const user = await this.userModel.findOne({
+        email: request.user.email,
+      });
+      if (!user) {
+        throw new HttpException('Invalid code', 401);
+      }
+      if (user.emailVerificationToken !== code.code) {
+        throw new HttpException('Invalid code', 401);
+      }
+
+      user.isEmailVerified = true;
+      user.emailVerificationToken = '';
+      await user.save();
+
+      return {
+        message: 'Email verified',
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
   async forgotPassword(email: ResetEmail) {
     try {
       const recoveryCode = uuidv4().substring(0, 6);

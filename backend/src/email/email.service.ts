@@ -27,7 +27,7 @@ export class EmailService {
     return await this.transporter.sendMail(mailOptions);
   }
 
-  async verifyEmail(to: string, code: string) {
+  async sendVerificationEmail(to: string, code: string) {
     const mailOptions = {
       from: 'KlowHub',
       to,
