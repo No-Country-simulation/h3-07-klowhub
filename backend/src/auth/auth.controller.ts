@@ -57,6 +57,16 @@ export class AuthController {
     return this.authService.verify(request);
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Send code to user' })
+  @ApiResponse({ status: 200, description: 'Code successfully send.' })
+  @ApiResponse({ status: 401, description: 'Invalid code' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  @Get('verifyemail')
+  async verifyEmail(@Req() request: RequestWithUser) {
+    return this.authService.verifyEmail(request);
+  }
+
   @ApiOperation({ summary: 'Send a recovery email for password reset' })
   @ApiResponse({ status: 200, description: 'Recovery email sent.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
