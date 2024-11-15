@@ -1,8 +1,10 @@
+import Link from "next/link"
+import { FC } from "react"
 
-const Header = () => {
+const Header: FC = () => {
     return (
-        <header>
-            Header
+        <header className="min-h-20 flex p-3 items-center">
+            <Link href={"/"}>Inicio</Link>
         </header>
     )
 }

@@ -17,3 +17,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
 }
+
+nextjs-portal{
+  position: absolute;
+}
