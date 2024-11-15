@@ -67,6 +67,8 @@ export class AuthService {
         email: user.email,
         username: user.username,
         role: user.role,
+        profileImage: user.profileImage,
+        isEmailVerified: user.isEmailVerified,
       };
       const token = await this.jwtService.signAsync(payload);
 
@@ -77,6 +79,7 @@ export class AuthService {
         email: user.email,
         username: user.username,
         profileImage: user.profileImage,
+        isEmailVerified: user.isEmailVerified,
       };
     } catch (error) {
       throw new HttpException(error.message, 500);

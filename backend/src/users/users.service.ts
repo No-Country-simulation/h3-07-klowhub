@@ -67,4 +67,16 @@ export class UsersService {
 
     return { imageUrl: file.path };
   }
+
+  async upgradeToSeller(user: UserResponseDto) {
+    try {
+      return this.userModel.findByIdAndUpdate(
+        { _id: user._id },
+        { role: 'seller' },
+        { new: true },
+      );
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
 }

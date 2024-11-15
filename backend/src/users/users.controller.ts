@@ -24,6 +24,9 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Role } from 'src/enum/role.enum';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
@@ -45,8 +48,7 @@ export class UsersController {
     return this.usersService.getProfile(userId._id);
   }
 
-  @UseGuards(AuthGuard)
-  @Patch('updateprofile')
+ 
   @ApiOperation({ summary: 'Update user profile' })
   @ApiResponse({
     status: 200,
@@ -61,9 +63,7 @@ export class UsersController {
     return this.usersService.update(userId, updateUserDto);
   }
 
-  @UseGuards(AuthGuard)
-  @Patch('imageprofile')
-  @UseInterceptors(FileInterceptor('img', { storage }))
+  
   @ApiOperation({ summary: 'Upload user profile image' })
   @ApiResponse({ status: 201, description: 'Image uploaded successfully.' })
   @ApiResponse({ status: 400, description: 'No file uploaded.' })
@@ -73,5 +73,16 @@ export class UsersController {
   async uploadImage(@UploadedFile() file: Express.Multer.File, @Req() request) {
     const userId = request.user;
     return this.usersService.uploadImage(file, userId);
+  }
+
+  @ApiOperation({ summary: 'Upgrade user to seller' })
+  @ApiResponse({ status: 201, description: 'User upgraded to seller.' })
+  @ApiResponse({ status: 400, description: 'Invalid data provided.' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('user')
+  @Post('upgrade-user-to-seller')
+  upgradeToSeller(@Req() request) {
+    const userId = request.user;
+    return this.usersService.upgradeToSeller(userId);
   }
 }
