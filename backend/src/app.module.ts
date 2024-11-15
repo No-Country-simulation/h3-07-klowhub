@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { ImagesModule } from './images/images.module';
+import { ImagesModule } from './media/images.module';
 
 @Module({
   imports: [
