@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from 'src/email/email.service';
 import { ResetEmail } from './dto/recovery-email.dto';
 import { ValidateCode } from './dto/validate-code.dto';
+import { ValidateEmailCode } from './dto/validate-emailCode';
 
 @Injectable()
 export class AuthService {
@@ -75,6 +76,7 @@ export class AuthService {
         role: user.role,
         email: user.email,
         username: user.username,
+        profileImage: user.profileImage,
       };
     } catch (error) {
       throw new HttpException(error.message, 500);
@@ -114,6 +116,52 @@ export class AuthService {
     }
   }
 
+  async sendCodeVerifyEmail(request: any) {
+    try {
+      const user = await this.userModel.findOne({ email: request.user.email });
+      if (!user) {
+        throw new HttpException('Invalid code', 401);
+      }
+      const verifyEmailCode = uuidv4().substring(0, 4);
+
+      user.emailVerificationToken = verifyEmailCode;
+      await user.save();
+
+      await this.emailService.sendVerificationEmail(
+        request.user.email,
+        verifyEmailCode,
+      );
+      return {
+        message: 'Email sent',
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async validateCodeFromEmail(request: any, code: ValidateEmailCode) {
+    try {
+      const user = await this.userModel.findOne({
+        email: request.user.email,
+      });
+      if (!user) {
+        throw new HttpException('Invalid code', 401);
+      }
+      if (user.emailVerificationToken !== code.code) {
+        throw new HttpException('Invalid code', 401);
+      }
+
+      user.isEmailVerified = true;
+      user.emailVerificationToken = '';
+      await user.save();
+
+      return {
+        message: 'Email verified',
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
   async forgotPassword(email: ResetEmail) {
     try {
       const recoveryCode = uuidv4().substring(0, 6);
