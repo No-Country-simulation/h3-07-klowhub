@@ -4,7 +4,7 @@ import { FieldValues } from "react-hook-form";
 export const registerUser = async (datos: FieldValues) => {
   try {
     const respuesta = await axios.post(
-      "http://localhost:3001/api/auth",
+      "https://klowhub.onrender.com/api/auth",
       {
         username: datos.name,
         password: datos.password,
@@ -24,6 +24,7 @@ export const registerUser = async (datos: FieldValues) => {
     } else {
       throw new Error("Registro fallido");
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Error al registrar:", error.response.data.message);
     throw error;
@@ -33,7 +34,7 @@ export const registerUser = async (datos: FieldValues) => {
 export const loginUser = async (datos: FieldValues) => {
   try {
     const response = await axios.post(
-      "http://localhost:3001/api/auth/login",
+      "https://klowhub.onrender.com/api/auth/login",
       {
         email: datos.email,
         password: datos.password,
