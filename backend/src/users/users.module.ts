@@ -7,6 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from 'src/auth/models/user.model';
 import { ConfigService } from '@nestjs/config';
+import { SellerSchema } from 'src/auth/models/seller.model';
+import { PlanSchema } from 'src/plans/models/plan.model';
 
 @Module({
   imports: [
@@ -17,7 +19,14 @@ import { ConfigService } from '@nestjs/config';
         signOptions: { expiresIn: config.get<string | number>('JWT_EXPIRES') },
       }),
     }),
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'User', schema: UserSchema },
+      {
+        name: 'Seller',
+        schema: SellerSchema,
+      },
+      { name: 'Plan', schema: PlanSchema },
+    ]),
   ],
   controllers: [UsersController],
   providers: [UsersService, EmailService, AuthService],

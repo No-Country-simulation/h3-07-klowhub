@@ -22,8 +22,6 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
-import { RolesGuard } from './guard/roles.guard';
-import { Roles } from './decorators/roles.decorator';
 import { AuthGuard } from './guard/auth.guard';
 import { ValidateEmailCode } from './dto/validate-emailCode';
 

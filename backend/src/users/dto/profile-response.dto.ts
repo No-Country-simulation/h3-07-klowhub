@@ -1,3 +1,5 @@
+import { Type } from "@nestjs/common";
+
 export class UserResponseDto {
   access_token: string;
   _id: string;

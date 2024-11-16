@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ImagesModule } from './media/images.module';
+import { PlansModule } from './plans/plans.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ImagesModule } from './media/images.module';
     AuthModule,
     UsersModule,
     ImagesModule,
+    PlansModule,
   ],
   controllers: [AppController],
   providers: [AppService],

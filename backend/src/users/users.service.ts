@@ -1,4 +1,9 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Model } from 'mongoose';
@@ -6,16 +11,22 @@ import { User, UserDocument } from 'src/auth/models/user.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserResponseDto } from './dto/profile-response.dto';
 import * as bcrypt from 'bcrypt';
+import { Seller, SellerDocument } from 'src/auth/models/seller.model';
+import { CreateSellerDto } from './dto/create-seller.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Seller.name) private sellerModel: Model<SellerDocument>,
+  ) {}
 
   async getProfile(user: UserResponseDto) {
     try {
       const result = await this.userModel
         .findById({ _id: user })
-        .select('-password');
+        .select('-password')
+        .populate('seller');
       if (!result) {
         throw new HttpException('User not found', 404);
       }
@@ -68,14 +79,45 @@ export class UsersService {
     return { imageUrl: file.path };
   }
 
-  async upgradeToSeller(user: UserResponseDto) {
+  async upgradeToSeller(user: UserResponseDto, sellerData: CreateSellerDto) {
     try {
-      return this.userModel.findByIdAndUpdate(
-        { _id: user._id },
-        { role: 'seller' },
-        { new: true },
-      );
+      const existingUser = await this.userModel.findById(user._id);
+      if (!existingUser) throw new NotFoundException('User not found');
+      if (existingUser.role === 'seller') {
+        throw new BadRequestException('User is already a seller');
+      }
+      console.log('llego');
+      const newSeller = new this.sellerModel({
+        user: existingUser._id,
+        plan: null, // Asignar plan Starter posteriormente
+        profileName: sellerData.profileName,
+        profileDescription: sellerData.profileDescription || null,
+        sellerType: sellerData.sellerType,
+        portfolioWebLink: sellerData.portfolioWebLink || null,
+        receivePayments: sellerData.receivePayments,
+        idImageFront: sellerData.idImageFront,
+        idImageBack: sellerData.idImageBack,
+        courses: [],
+        applications: [],
+        projects: [],
+        totalSales: 0,
+        totalRevenue: 0,
+      });
+      console.log(newSeller);
+      const savedSeller = await newSeller.save();
+
+      // Actualizar el usuario
+      existingUser.role = 'seller';
+      existingUser.seller = savedSeller._id;
+
+      await existingUser.save();
+
+      return {
+        message: 'User upgraded to seller successfully',
+        seller: savedSeller,
+      };
     } catch (error) {
+      console.log(error);
       throw new HttpException(error.message, 500);
     }
   }

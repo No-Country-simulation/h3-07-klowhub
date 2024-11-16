@@ -27,6 +27,7 @@ import {
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Role } from 'src/enum/role.enum';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { CreateSellerDto } from './dto/create-seller.dto';
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
@@ -48,7 +49,6 @@ export class UsersController {
     return this.usersService.getProfile(userId._id);
   }
 
- 
   @ApiOperation({ summary: 'Update user profile' })
   @ApiResponse({
     status: 200,
@@ -63,7 +63,6 @@ export class UsersController {
     return this.usersService.update(userId, updateUserDto);
   }
 
-  
   @ApiOperation({ summary: 'Upload user profile image' })
   @ApiResponse({ status: 201, description: 'Image uploaded successfully.' })
   @ApiResponse({ status: 400, description: 'No file uploaded.' })
@@ -81,8 +80,8 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('user')
   @Post('upgrade-user-to-seller')
-  upgradeToSeller(@Req() request) {
+  upgradeToSeller(@Req() request, @Body() sellerData: CreateSellerDto) {
     const userId = request.user;
-    return this.usersService.upgradeToSeller(userId);
+    return this.usersService.upgradeToSeller(userId, sellerData);
   }
 }
