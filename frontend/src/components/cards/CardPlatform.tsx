@@ -5,15 +5,15 @@ interface PlatformProps {
     value: "Power Apps" | "AppSheet"
 }
 
-const PlatformCard: FC<PlatformProps> = ({ value }) => {
+const CardPlatform: FC<PlatformProps> = ({ value }) => {
     return (
-        <Card className="w-fit px-5 py-2 flex-row items-center justify-center gap-3 align-middle bg-gray-600">
+        <Card className="w-fit px-5 py-1.5 flex-row items-center justify-center gap-2 align-middle bg-gray-600">
             <Image
                 alt="nextui logo"
-                height={35}
+                height={25}
                 radius="sm"
                 src={`/assets/icons/platforms/${value === "Power Apps" ? "PowerApps" : "AppSheet"}.svg`}
-                width={35}
+                width={25}
             />
             <h4 className="text-base font-semibold">
                 {value}
@@ -22,5 +22,5 @@ const PlatformCard: FC<PlatformProps> = ({ value }) => {
     )
 }
 
-export default PlatformCard
+export default CardPlatform
 

@@ -7,7 +7,7 @@ interface TagsProps extends ChipProps {
 
 const Tags: FC<TagsProps> = ({ tags, variant, ...rest }) => {
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-2 py-1.5 max-w-full overflow-auto scrollbar-hide cursor-grab">
       {
         tags.map((tag, index) => (
           <Chip
