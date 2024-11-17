@@ -45,8 +45,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Get()
   profile(@Req() request) {
-    const userId = request.user;
-    return this.usersService.getProfile(userId._id);
+    return this.usersService.getProfile(request.user);
   }
 
   @ApiOperation({ summary: 'Update user profile' })

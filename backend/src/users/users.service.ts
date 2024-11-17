@@ -13,25 +13,44 @@ import { UserResponseDto } from './dto/profile-response.dto';
 import * as bcrypt from 'bcrypt';
 import { Seller, SellerDocument } from 'src/auth/models/seller.model';
 import { CreateSellerDto } from './dto/create-seller.dto';
+import { Plan, PlanDocument } from 'src/plans/models/plan.model';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Seller.name) private sellerModel: Model<SellerDocument>,
+    @InjectModel(Plan.name) private planModel: Model<PlanDocument>,
   ) {}
 
   async getProfile(user: UserResponseDto) {
     try {
-      const result = await this.userModel
-        .findById({ _id: user })
-        .select('-password')
-        .populate('seller');
+
+      let result;
+
+      if (user.role === 'seller') {
+        result = await this.userModel
+          .findById({ _id: user._id })
+          .select('-password')
+          .populate({
+            path: 'seller',
+            populate: {
+              path: 'plan',
+            },
+          });
+      } else {
+        result = await this.userModel
+          .findById({ _id: user._id })
+          .select('-password');
+      }
+
       if (!result) {
         throw new HttpException('User not found', 404);
       }
+
       return result;
     } catch (error) {
+      console.error('Error in getProfile:', error.message);
       throw new HttpException(error.message, 500);
     }
   }
@@ -86,10 +105,12 @@ export class UsersService {
       if (existingUser.role === 'seller') {
         throw new BadRequestException('User is already a seller');
       }
-      console.log('llego');
+      const starterPlan = await this.planModel.findOne({ name: 'Starter' });
+      if (!starterPlan) throw new NotFoundException('Starter plan not found');
+
       const newSeller = new this.sellerModel({
         user: existingUser._id,
-        plan: null, // Asignar plan Starter posteriormente
+        plan: starterPlan._id, // Asignar plan Starter posteriormente
         profileName: sellerData.profileName,
         profileDescription: sellerData.profileDescription || null,
         sellerType: sellerData.sellerType,
@@ -103,7 +124,7 @@ export class UsersService {
         totalSales: 0,
         totalRevenue: 0,
       });
-      console.log(newSeller);
+
       const savedSeller = await newSeller.save();
 
       // Actualizar el usuario

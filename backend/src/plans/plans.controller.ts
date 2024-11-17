@@ -33,16 +33,22 @@ export class PlansController {
     return this.plansService.findAll();
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('superAdmin')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.plansService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('superAdmin')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePlanDto: UpdatePlanDto) {
     return this.plansService.update(+id, updatePlanDto);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('superAdmin')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.plansService.remove(+id);
