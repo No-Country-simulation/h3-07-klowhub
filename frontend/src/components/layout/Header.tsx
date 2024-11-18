@@ -1,10 +1,31 @@
+"use client";
 import Image from "next/image";
 import NavLink from "./components/NavLink";
+import { useState } from "react";
 
 const Header = () => {
+  const menuExplorador = [
+    { url: "/creador", text: "Dasboard" },
+    { url: "/creador/creador", text: "Cursos y lecciones" },
+    { url: "/creador/creador", text: "Appstore" },
+    { url: "/creador/creador", text: "Proyectos" },
+    { url: "/creador/creador", text: "Consultoría" },
+    { url: "/creador/creador", text: "Sobre KlowHub" },
+  ];
+  const menuCreador = [
+    { url: "/creador", text: "Dasboard" },
+    { url: "/creador/creador", text: "Ganancias" },
+    { url: "/creador/creador", text: "Mis productos" },
+    { url: "/creador/creador", text: "Ver proyectos disponibles" },
+  ];
+  const [userMode, setUserMode] = useState<boolean>(false);
+  const handleUserMode = () => {
+    setUserMode((mode) => !mode);
+  };
   return (
-    <header className="min-h-20 flex p-3 items-center gap-3 justify-between">
-      <nav className="flex gap-2 xl:gap-6 items-center">
+    <header className="min-h-20 flex p-3 items-center gap-3 justify-between relative mt-5">
+      <div className="absolute h-full w-full bg-[#1F202699]/40 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 "></div>
+      <nav className="flex gap-2 xl:gap-6 items-center z-10">
         <Image
           src="/assets/icons/klowhub.png"
           alt="Klowhub logo"
@@ -13,14 +34,15 @@ const Header = () => {
           className="text-xs"
         />
         <NavLink url="/" text="Home" />
-        <NavLink url="/" text="Dashboard" />
-        <NavLink url="/" text="Cursos y lecciones" />
-        <NavLink url="/" text="Appstore" />
-        <NavLink url="/" text="Proyectos" />
-        <NavLink url="/" text="consultoría" />
-        <NavLink url="/" text="Sobre KlowHub" />
+        {userMode
+          ? menuCreador.map((menu) => (
+              <NavLink key={menu.text} url={menu.url} text={menu.text} />
+            ))
+          : menuExplorador.map((menu) => (
+              <NavLink key={menu.text} url={menu.url} text={menu.text} />
+            ))}
       </nav>
-      <section className="flex gap-8 pr-10 xl:text-base text-sm items-center">
+      <section className="flex gap-8 pr-10 xl:text-base text-sm items-center z-10">
         <section className="flex gap-4">
           {" "}
           {/**CREAR LOS BUDGES */}
@@ -92,19 +114,28 @@ const Header = () => {
           </svg>
         </section>
         <section className="flex gap-4 flex-grow items-center">
-          <p>Explorador</p>
+          <p>{userMode ? "Creador" : "Explorador"}</p>
           <div className="flex items-center">
             <input
               className="react-switch-checkbox"
               type="checkbox"
               id="UserMode"
+              onChange={handleUserMode}
             />
             <label htmlFor="UserMode" className="react-switch-label">
               <span className="react-switch-button" />
             </label>
           </div>
         </section>
-        <section>Avatar</section>
+        <section>
+          <Image
+            src={"/assets/avatars/foto1.png"}
+            alt="Avatar"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        </section>
       </section>
     </header>
   );
