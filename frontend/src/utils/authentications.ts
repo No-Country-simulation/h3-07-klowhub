@@ -1,5 +1,6 @@
 import axios from "axios";
 import { FieldValues } from "react-hook-form";
+import Cookies from "js-cookie";
 
 export const registerUser = async (datos: FieldValues) => {
   try {
@@ -50,6 +51,7 @@ export const loginUser = async (datos: FieldValues) => {
       // With axios, the response data is already parsed to JSON
       // so we don't need to call .json()
       localStorage.setItem("userState", JSON.stringify(response.data));
+      Cookies.set("userState", JSON.stringify(response.data), { expires: 7 }); // expires in 7 days
       return response.data;
     } else {
       throw new Error("Login failed");

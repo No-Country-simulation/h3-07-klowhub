@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { loginUser } from "@/utils/authentications";
+import Cookies from "js-cookie";
 
 const LOCAL_STORAGE_KEY = "userState";
 
@@ -48,6 +49,7 @@ export const userSlice = createSlice({
   reducers: {
     logout: () => {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
+      Cookies.remove("userState");
       return initialState;
     },
     restoreState: () => {

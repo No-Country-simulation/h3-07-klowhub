@@ -151,7 +151,7 @@ const Header = () => {
           />
           {tooltipOpen && (
             <div className="absolute top-12 -right-2 bg-white p-2 rounded-md shadow-md text-sm">
-              <p>Logout</p>
+              <p className="text-black">Logout</p>
             </div>
           )}
         </section>
