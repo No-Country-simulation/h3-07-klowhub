@@ -2,6 +2,10 @@
 import Image from "next/image";
 import NavLink from "./components/NavLink";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/stores/store";
+import { useRouter } from "next/navigation";
+import { logout } from "@/stores/userSlice";
 
 const Header = () => {
   const menuExplorador = [
@@ -19,8 +23,15 @@ const Header = () => {
     { url: "/creador/creador", text: "Ver proyectos disponibles" },
   ];
   const [userMode, setUserMode] = useState<boolean>(false);
+  const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const handleUserMode = () => {
     setUserMode((mode) => !mode);
+  };
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/login"); // or wherever you want to redirect after logout
   };
   return (
     <header className="min-h-20 flex p-3 items-center gap-3 justify-between relative mt-5">
@@ -127,14 +138,22 @@ const Header = () => {
             </label>
           </div>
         </section>
-        <section>
+        <section className="cursor-pointer relative">
           <Image
+            onMouseEnter={() => setTooltipOpen(true)}
+            onMouseLeave={() => setTooltipOpen(false)}
+            onClick={handleLogout}
             src={"/assets/avatars/foto1.png"}
             alt="Avatar"
             width={40}
             height={40}
-            className="rounded-full"
+            className="rounded-full hover:shadow-lg"
           />
+          {tooltipOpen && (
+            <div className="absolute top-12 -right-2 bg-white p-2 rounded-md shadow-md text-sm">
+              <p>Logout</p>
+            </div>
+          )}
         </section>
       </section>
     </header>

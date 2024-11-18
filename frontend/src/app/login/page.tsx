@@ -1,20 +1,42 @@
 "use client";
 import Form from "@/components/form/Form";
-import { loginUser } from "@/utils/authentications";
+import { RootState, useAppDispatch } from "@/stores/store";
+import { loginUserState } from "@/stores/userSlice";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+
+interface LoginFormData {
+  email: string;
+  password: string;
+}
 
 const Login = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
-  const onSubmit = handleSubmit((data) => loginUser(data));
+  } = useForm<LoginFormData>();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const [loginError, setLoginError] = useState<string>("");
+  const isLoading = useSelector((state: RootState) => state.user.loading);
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await dispatch(loginUserState(data)).unwrap();
+      router.push("/");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setLoginError("Credenciales invalidas.");
+      console.log(error);
+    }
+  });
   return (
     <div className="bg-[url('/backgroundLogin.png')] w-screen h-[calc(1126px-309px)] bg-cover bg-no-repeat font-inter flex">
       <div className="w-1/2">
@@ -55,6 +77,11 @@ const Login = () => {
                 errorMessage="Debe ingresar un password"
               />
             </section>
+            <section className="pl-5 text-red-500">
+              {loginError !== "" && (
+                <p className="text-sm">{loginError} Intente nuevamente.</p>
+              )}
+            </section>
             <section className="text-center">
               <p className="text-xs font-medium">
                 Al registrarte, aceptas nuestras{" "}
@@ -71,8 +98,9 @@ const Login = () => {
                 size="lg"
                 className="mt-4"
                 type="submit"
+                disabled={isLoading}
               >
-                Login
+                {isLoading ? "iniciando sesión..." : "Login"}
               </Button>
             </section>
             <section className="flex flex-col items-center gap-4">

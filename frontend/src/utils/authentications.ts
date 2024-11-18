@@ -49,7 +49,7 @@ export const loginUser = async (datos: FieldValues) => {
     if (response.status === 201) {
       // With axios, the response data is already parsed to JSON
       // so we don't need to call .json()
-      localStorage.setItem("userData", JSON.stringify(response.data));
+      localStorage.setItem("userState", JSON.stringify(response.data));
       return response.data;
     } else {
       throw new Error("Login failed");
