@@ -2,12 +2,22 @@
 import Image from "next/image";
 import NavLink from "./components/NavLink";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/stores/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/stores/store";
 import { useRouter } from "next/navigation";
 import { logout } from "@/stores/userSlice";
+import Modal from "../modals/Modal";
+import { Button } from "@nextui-org/button";
 
 const Header = () => {
+  const menuAdministrador = [
+    { url: "/creador", text: "Dasboard" },
+    { url: "/creador/creador", text: "Gestión de usuarios y contenido" },
+    { url: "/creador/creador", text: "Configuración" },
+    { url: "/creador/creador", text: "Transacciones y estadísticas" },
+    { url: "/creador/creador", text: "Revisión de contenidos" },
+    { url: "/creador/creador", text: "Soporte" },
+  ];
   const menuExplorador = [
     { url: "/creador", text: "Dasboard" },
     { url: "/creador/creador", text: "Cursos y lecciones" },
@@ -22,19 +32,84 @@ const Header = () => {
     { url: "/creador/creador", text: "Mis productos" },
     { url: "/creador/creador", text: "Ver proyectos disponibles" },
   ];
-  const [userMode, setUserMode] = useState<boolean>(false);
+  const { role } = useSelector((state: RootState) => state.user);
+  const [isCreatorMode, setIsCreatorMode] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const handleUserMode = () => {
-    setUserMode((mode) => !mode);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const getCurrentMenu = () => {
+    switch (role) {
+      case "admin":
+        return menuAdministrador;
+      case "user":
+        return menuExplorador;
+      case "seller":
+        return isCreatorMode ? menuCreador : menuExplorador;
+      default:
+        return menuExplorador;
+    }
   };
+
+  const handleUserMode = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (role === "user") {
+      // Prevent the checkbox from changing state
+      event.preventDefault();
+      openModal();
+      return;
+    }
+    setIsCreatorMode(event.target.checked);
+  };
+  const handleInputClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    if (role === "user") {
+      event.preventDefault();
+      openModal();
+      return;
+    }
+  };
+
   const handleLogout = () => {
     dispatch(logout());
     router.push("/login"); // or wherever you want to redirect after logout
   };
   return (
     <header className="min-h-20 flex p-3 items-center gap-3 justify-between relative mt-5">
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="¿Desea convertirse en Vendedor?"
+      >
+        <div className="flex flex-col gap-4">
+          <p className="text-sm">
+            Al aceptar será dirigido al asistente para completar los
+            requerimientos para convertirse en un Vendedor!
+          </p>
+        </div>
+        <div>
+          <Button
+            type="button"
+            onClick={() => {
+              closeModal();
+            }}
+          >
+            Cerrar
+          </Button>
+          <Button
+            type="button"
+            onClick={() => {
+              alert("convertido en vendedor");
+              closeModal();
+            }}
+          >
+            Quiero convertirme en Vendedor!
+          </Button>
+        </div>
+      </Modal>
+
       <div className="absolute h-full w-full bg-[#1F202699]/40 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 "></div>
       <nav className="flex gap-2 xl:gap-6 items-center z-10">
         <Image
@@ -45,13 +120,9 @@ const Header = () => {
           className="text-xs"
         />
         <NavLink url="/" text="Home" />
-        {userMode
-          ? menuCreador.map((menu) => (
-              <NavLink key={menu.text} url={menu.url} text={menu.text} />
-            ))
-          : menuExplorador.map((menu) => (
-              <NavLink key={menu.text} url={menu.url} text={menu.text} />
-            ))}
+        {getCurrentMenu().map((menu) => (
+          <NavLink key={menu.text} url={menu.url} text={menu.text} />
+        ))}
       </nav>
       <section className="flex gap-8 pr-10 xl:text-base text-sm items-center z-10">
         <section className="flex gap-4">
@@ -124,20 +195,24 @@ const Header = () => {
             />
           </svg>
         </section>
-        <section className="flex gap-4 flex-grow items-center">
-          <p>{userMode ? "Creador" : "Explorador"}</p>
-          <div className="flex items-center">
-            <input
-              className="react-switch-checkbox"
-              type="checkbox"
-              id="UserMode"
-              onChange={handleUserMode}
-            />
-            <label htmlFor="UserMode" className="react-switch-label">
-              <span className="react-switch-button" />
-            </label>
-          </div>
-        </section>
+        {role !== "admin" && (
+          <section className="flex gap-4 flex-grow items-center">
+            <p>{role === "seller" ? "Creador" : "Explorador"}</p>
+            <div className="flex items-center">
+              <input
+                className="react-switch-checkbox"
+                type="checkbox"
+                id="UserMode"
+                onChange={handleUserMode}
+                onClick={handleInputClick}
+                checked={isCreatorMode}
+              />
+              <label htmlFor="UserMode" className="react-switch-label">
+                <span className="react-switch-button" />
+              </label>
+            </div>
+          </section>
+        )}
         <section className="cursor-pointer relative">
           <Image
             onMouseEnter={() => setTooltipOpen(true)}
