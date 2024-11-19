@@ -9,6 +9,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ImagesModule } from './media/images.module';
 import { PlansModule } from './plans/plans.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DashboardModule } from './admin/dashboard/dashboard.module';
+import { NotificationsModule } from './admin/notifications/notifications.module';
+import { AdminUsersModule } from './admin/admin-users/admin-users.module';
 
 @Module({
   imports: [
@@ -50,6 +53,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     UsersModule,
     ImagesModule,
     PlansModule,
+    DashboardModule,
+    NotificationsModule,
+    AdminUsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
