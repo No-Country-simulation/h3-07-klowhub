@@ -1,4 +1,5 @@
 // app/(protected)/layout.tsx - For protected pages
+
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function ProtectedLayout({

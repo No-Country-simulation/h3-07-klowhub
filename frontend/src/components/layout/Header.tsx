@@ -11,7 +11,7 @@ import { Button } from "@nextui-org/button";
 
 const Header = () => {
   const menuAdministrador = [
-    { url: "/creador", text: "Dasboard" },
+    { url: "/dashboard", text: "Dasboard" },
     { url: "/creador/creador", text: "Gestión de usuarios y contenido" },
     { url: "/creador/creador", text: "Configuración" },
     { url: "/creador/creador", text: "Transacciones y estadísticas" },
