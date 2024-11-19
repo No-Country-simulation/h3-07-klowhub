@@ -12,19 +12,19 @@ import { Button } from "@nextui-org/button";
 const Header = () => {
   const menuAdministrador = [
     { url: "/dashboard", text: "Dasboard" },
-    { url: "/creador/creador", text: "Gestión de usuarios y contenido" },
-    { url: "/creador/creador", text: "Configuración" },
-    { url: "/creador/creador", text: "Transacciones y estadísticas" },
-    { url: "/creador/creador", text: "Revisión de contenidos" },
-    { url: "/creador/creador", text: "Soporte" },
+    { url: "/usuarios-y-contenido", text: "Gestión de usuarios y contenido" },
+    { url: "/configuracion", text: "Configuración" },
+    { url: "/estadisticas", text: "Transacciones y estadísticas" },
+    { url: "/revision-de-contenidos", text: "Revisión de contenidos" },
+    { url: "/soporte", text: "Soporte" },
   ];
   const menuExplorador = [
-    { url: "/creador", text: "Dasboard" },
-    { url: "/creador/creador", text: "Cursos y lecciones" },
-    { url: "/creador/creador", text: "Appstore" },
-    { url: "/creador/creador", text: "Proyectos" },
-    { url: "/creador/creador", text: "Consultoría" },
-    { url: "/creador/creador", text: "Sobre KlowHub" },
+    { url: "/user-dashboard", text: "Dasboard" },
+    { url: "/cursos-y-lecciones", text: "Cursos y lecciones" },
+    { url: "/appstore", text: "Appstore" },
+    { url: "/proyectos", text: "Proyectos" },
+    { url: "/consultoria", text: "Consultoría" },
+    { url: "/sobre", text: "Sobre KlowHub" },
   ];
   const menuCreador = [
     { url: "/creador", text: "Dasboard" },
