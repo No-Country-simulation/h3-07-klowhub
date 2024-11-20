@@ -6,6 +6,7 @@ import Modal from "../modals/Modal";
 import { Button } from "@nextui-org/button";
 
 import { useAuth } from "@/stores/userAuth";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -33,12 +34,15 @@ const Header = () => {
   ];
 
   const [isCreatorMode, setIsCreatorMode] = useState(false);
-  const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const router = useRouter();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
+  const handleRedirect = () => {
+    router.push("/profile");
+  };
   const getCurrentMenu = () => {
     switch (user?.role) {
       case "admin":
@@ -209,22 +213,21 @@ const Header = () => {
             </div>
           </section>
         )}
-        <section className="cursor-pointer relative">
+        <section className="cursor-pointer relative group">
           <Image
-            onMouseEnter={() => setTooltipOpen(true)}
-            onMouseLeave={() => setTooltipOpen(false)}
-            onClick={handleLogout}
+            onClick={handleRedirect}
             src={"/assets/avatars/foto1.png"}
             alt="Avatar"
             width={40}
             height={40}
             className="rounded-full hover:shadow-lg"
           />
-          {tooltipOpen && (
-            <div className="absolute top-12 -right-2 bg-white p-2 rounded-md shadow-md text-sm">
-              <p className="text-black">Logout</p>
-            </div>
-          )}
+
+          <div className="opacity-0 group-hover:opacity-100 hover:opacity-100 absolute top-12 -right-2 bg-white p-2 rounded-md shadow-md text-sm transition-opacity duration-400">
+            <p className="text-black" onClick={handleLogout}>
+              Logout
+            </p>
+          </div>
         </section>
       </section>
     </header>
