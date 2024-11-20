@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/stores/store";
 import Header from "@/components/layout/Header";
+import { Suspense } from "react";
 
 export default function ProtectedLayout({
   children,
@@ -19,9 +20,11 @@ export default function ProtectedLayout({
   }
 
   return (
-    <div>
-      <Header />
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Header />
+      </Suspense>
       <main>{children}</main>
-    </div>
+    </>
   );
 }
