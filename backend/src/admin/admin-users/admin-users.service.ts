@@ -23,19 +23,5 @@ export class AdminUsersService {
     };
   }
 
-  findAll() {
-    return `This action returns all adminUsers`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} adminUser`;
-  }
-
-  update(id: number, updateAdminUserDto: UpdateAdminUserDto) {
-    return `This action updates a #${id} adminUser`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} adminUser`;
-  }
+ 
 }
