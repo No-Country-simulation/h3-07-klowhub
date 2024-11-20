@@ -5,4 +5,5 @@ export class UserResponseDto {
   username: string;
   email: string;
   profileImage: string;
+  isEmailVerified: boolean;
 }

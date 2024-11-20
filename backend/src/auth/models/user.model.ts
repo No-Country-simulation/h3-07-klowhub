@@ -1,4 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
+import { Seller } from './seller.model';
 
 export type UserDocument = User & Document;
 
@@ -15,10 +17,10 @@ export class User {
 
   @Prop({ required: false })
   description: string;
-  
+
   @Prop({
     type: String,
-    enum: ['user', 'seller', 'admin'],
+    enum: ['user', 'seller', 'admin', 'superAdmin'],
     default: 'user',
   })
   role: string;
@@ -52,6 +54,16 @@ export class User {
 
   @Prop({ required: false })
   profileImage: string;
+
+  // Relación con el esquema Seller
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Seller', default: null })
+  seller: mongoose.Types.ObjectId | null;
+
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ default: Date.now }) 
+  lastLogin: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -37,7 +37,7 @@ export class CreateUserDto {
   )
   readonly password: string;
 
+  /* @IsOptional()
   @IsString()
-  @IsOptional()
-  readonly role: UserRole;
+  readonly role: UserRole; */
 }

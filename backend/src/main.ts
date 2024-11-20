@@ -7,6 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('/api');
+
   const config = new DocumentBuilder()
     .setTitle('EduFlex API')
     .setDescription('EduFlex Api Api Description')
