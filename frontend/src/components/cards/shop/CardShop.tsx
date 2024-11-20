@@ -1,9 +1,6 @@
 "use client"
-import { Card, Image, Button, CardBody, CardFooter } from '@nextui-org/react';
-import { Chip } from "@nextui-org/chip";
+import { Button } from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
-import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons/faEllipsisVertical';
 import { faCartPlus } from '@fortawesome/free-solid-svg-icons/faCartPlus';
 import { FC } from 'react';
 import StarsCalification from '../../common/StarsCalification';

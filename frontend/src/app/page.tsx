@@ -1,7 +1,6 @@
 import CardShop from "@/components/cards/shop/CardShop";
 import CardShopConnect from "@/components/cards/shop/CardShopConnect";
 import CardSection from "@/components/common/CardSection";
-import Divider from "@/components/divider/Divider";
 
 export default function Home() {
   return (
