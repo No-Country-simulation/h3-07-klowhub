@@ -17,13 +17,13 @@ interface CardShopProps {
   // type:"Lección" | "Curso";
   // title: string;
   // description: string;
-  // platform: string;
+  platform?: "AppSheet" | "Power Apps";
   // tags: string[];
   // totalCalification: number;
   // price: number;
 }
 
-const CardShop: FC<CardShopProps> = ({ isFor }) => {
+const CardShop: FC<CardShopProps> = ({ isFor, platform }) => {
   return (
     <CardContain
       size={isFor === "course" ? "md" : "xs"}
@@ -45,7 +45,7 @@ const CardShop: FC<CardShopProps> = ({ isFor }) => {
       </p>
 
       {/* Plataforma */}
-      <PlatformCard value={"AppSheet"} />
+      <PlatformCard value={platform ?? "AppSheet"} />
 
       {/* Etiquetas */}
       <Tags tags={["Logística", "Optimización", "Inventarios"]} />
