@@ -2,14 +2,13 @@
 import Image from "next/image";
 import NavLink from "./components/NavLink";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/stores/store";
-import { useRouter } from "next/navigation";
-import { logout } from "@/stores/userSlice";
 import Modal from "../modals/Modal";
 import { Button } from "@nextui-org/button";
 
+import { useAuth } from "@/stores/userAuth";
+
 const Header = () => {
+  const { user, logout } = useAuth();
   const menuAdministrador = [
     { url: "/dashboard", text: "Dasboard" },
     { url: "/usuarios-y-contenido", text: "Gestión de usuarios y contenido" },
@@ -32,18 +31,16 @@ const Header = () => {
     { url: "/creador/creador", text: "Mis productos" },
     { url: "/creador/creador", text: "Ver proyectos disponibles" },
   ];
-  const { role } = useSelector((state: RootState) => state.user);
+
   const [isCreatorMode, setIsCreatorMode] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
-  const dispatch = useDispatch<AppDispatch>();
-  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const getCurrentMenu = () => {
-    switch (role) {
+    switch (user?.role) {
       case "admin":
         return menuAdministrador;
       case "user":
@@ -56,7 +53,7 @@ const Header = () => {
   };
 
   const handleUserMode = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (role === "user") {
+    if (user?.role === "user") {
       // Prevent the checkbox from changing state
       event.preventDefault();
       openModal();
@@ -65,7 +62,7 @@ const Header = () => {
     setIsCreatorMode(event.target.checked);
   };
   const handleInputClick = (event: React.MouseEvent<HTMLInputElement>) => {
-    if (role === "user") {
+    if (user?.role === "user") {
       event.preventDefault();
       openModal();
       return;
@@ -73,8 +70,7 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
-    router.push("/login"); // or wherever you want to redirect after logout
+    logout();
   };
   return (
     <header className="min-h-20 flex p-3 items-center gap-3 justify-between relative mt-5">
@@ -195,9 +191,9 @@ const Header = () => {
             />
           </svg>
         </section>
-        {role !== "admin" && (
+        {user?.role !== "admin" && (
           <section className="flex gap-4 flex-grow items-center">
-            <p>{role === "seller" ? "Creador" : "Explorador"}</p>
+            <p>{user?.role === "seller" ? "Creador" : "Explorador"}</p>
             <div className="flex items-center">
               <input
                 className="react-switch-checkbox"

@@ -12,8 +12,8 @@ export default function ProtectedRoute({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const user = useSelector((state: RootState) => state.user);
-  const isAuthenticated = !!user.access_token;
+  const user = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = !!user.token;
 
   useEffect(() => {
     if (!isAuthenticated) {

@@ -53,7 +53,7 @@ const Breadcrumb = () => {
   }
 
   return (
-    <nav aria-label="breadcrumb" className="mb-4">
+    <nav aria-label="breadcrumb" className="px-5">
       <ol className="flex items-center space-x-2 text-sm">
         <li className="breadcrumb-item">
           <Link href="/" className="text-white hover:text-gray-200">

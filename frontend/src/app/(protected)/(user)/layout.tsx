@@ -10,9 +10,9 @@ export default function UserLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.auth);
 
-  if (user.role !== "user") {
+  if (user.user?.role !== "user") {
     redirect("/"); // or wherever you want to redirect non-admins
   }
 

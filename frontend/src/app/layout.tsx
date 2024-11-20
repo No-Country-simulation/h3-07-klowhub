@@ -1,7 +1,8 @@
-// layout.tsx (Server Component)
+"use client";
 import type { Metadata } from "next";
 import "./globals.css";
-import ClientLayout from "./clientLayout";
+import { Provider } from "react-redux";
+import { store } from "@/stores/store";
 
 export default function RootLayout({
   children,
@@ -10,8 +11,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <title>KlowHub</title>
       <body>
-        <ClientLayout>{children}</ClientLayout>
+        <Provider store={store}>{children}</Provider>
       </body>
     </html>
   );

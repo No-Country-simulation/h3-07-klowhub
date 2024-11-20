@@ -1,36 +1,51 @@
 "use client";
 import Form from "@/components/form/Form";
-import { RootState, useAppDispatch } from "@/stores/store";
-import { loginUserState } from "@/stores/userSlice";
+import { useAuth } from "@/stores/userAuth";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
 
 interface LoginFormData {
   email: string;
   password: string;
 }
-
+const getRedirectPath = (role: string) => {
+  switch (role) {
+    case "superadmin":
+      return "/superadmin";
+    case "admin":
+      return "/admin/dashboard";
+    case "seller":
+      return "/seller";
+    default:
+      return "/user/user-dashboard";
+  }
+};
 const Login = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>();
-  const dispatch = useAppDispatch();
-  const router = useRouter();
+  const { login, isAuthenticated, isLoading, user } = useAuth();
   const [loginError, setLoginError] = useState<string>("");
-  const isLoading = useSelector((state: RootState) => state.user.loading);
-
+  const router = useRouter();
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectPath = getRedirectPath(user.role);
+      router.replace(redirectPath);
+      router.push("/admin/dashboard");
+    }
+  }, [isAuthenticated, user, router]);
   const onSubmit = handleSubmit(async (data) => {
+    setLoginError(""); // Clear previous errors
     try {
-      await dispatch(loginUserState(data)).unwrap();
-      router.push("/");
+      await login(data.email, data.password);
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setLoginError("Credenciales invalidas.");

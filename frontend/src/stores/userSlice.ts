@@ -1,85 +1,54 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import { loginUser } from "@/utils/authentications";
-import Cookies from "js-cookie";
+// src/store/features/auth/authSlice.ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { setCookies, clearCookies, getUserFromCookies } from "@/utils/cookies";
 
-const LOCAL_STORAGE_KEY = "userState";
-
-export interface UserState {
-  _id: number;
-  username: string;
-  email: string;
-  role: string;
+interface User {
   access_token: string;
-  loading: boolean;
-  error: string | null;
+  email: string;
+  role: "user" | "seller" | "admin" | "superadmin";
+  username: string;
+  _id: string;
 }
-const initialState: UserState = {
-  _id: 0,
-  username: "",
-  email: "",
-  role: "",
-  access_token: "",
-  loading: false,
-  error: null,
+interface AuthState {
+  isAuthenticated: boolean;
+  user: User | null;
+  token: string | null;
+}
+interface LoginPayload {
+  user: User;
+  token: string;
+}
+
+// Initialize state with cookies if they exist
+const userFromCookies = getUserFromCookies();
+
+const initialState: AuthState = {
+  isAuthenticated: !!userFromCookies,
+  user: userFromCookies,
+  token: null,
 };
 
-//Cargamos de Local storage si existe
-const loadState = (): UserState => {
-  try {
-    const serializedState = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (serializedState === null) {
-      return initialState;
-    }
-    return JSON.parse(serializedState);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (err) {
-    return initialState;
-  }
-};
-
-export const loginUserState = createAsyncThunk(
-  "user/loginUserState",
-  loginUser
-);
-
-export const userSlice = createSlice({
-  name: "user",
-  initialState: loadState(),
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
   reducers: {
-    logout: () => {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-      Cookies.remove("userState");
-      return initialState;
+    setCredentials: (state, action: PayloadAction<LoginPayload>) => {
+      const { user, token } = action.payload;
+      state.user = user;
+      state.token = token;
+      state.isAuthenticated = true;
+      // Set cookies when logging in
+      setCookies(user, token);
     },
-    restoreState: () => {
-      const savedState = loadState();
-      return savedState;
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+      // Clear cookies when logging out
+      clearCookies();
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(loginUserState.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        loginUserState.fulfilled,
-        (state, action: PayloadAction<UserState>) => {
-          state.loading = false;
-          state._id = action.payload._id;
-          state.username = action.payload.username;
-          state.email = action.payload.email;
-          state.role = action.payload.role;
-          state.access_token = action.payload.access_token;
-        }
-      )
-      .addCase(loginUserState.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Login failed";
-      });
   },
 });
 
-export const { logout, restoreState } = userSlice.actions;
-export default userSlice.reducer;
+export const { setCredentials, logout } = authSlice.actions;
+export default authSlice.reducer;
