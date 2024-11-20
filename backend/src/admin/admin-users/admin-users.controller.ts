@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AdminUsersService } from './admin-users.service';
 import { CreateAdminUserDto } from './dto/create-admin-user.dto';
 import { UpdateAdminUserDto } from './dto/update-admin-user.dto';
@@ -7,14 +7,15 @@ import { UpdateAdminUserDto } from './dto/update-admin-user.dto';
 export class AdminUsersController {
   constructor(private readonly adminUsersService: AdminUsersService) {}
 
-  @Post()
-  create(@Body() createAdminUserDto: CreateAdminUserDto) {
-    return this.adminUsersService.create(createAdminUserDto);
-  }
-
   @Get()
   findAll() {
     return this.adminUsersService.findAll();
+  }
+
+  @Post('deactivate-inactive-users')
+  deactivateInactiveUsers(@Query('months') months: string) {
+    const monthsNumber = parseInt(months, 10) || 3; // Por defecto, 3 meses
+    return this.adminUsersService.deactivateInactiveUsers(monthsNumber);
   }
 
   @Get(':id')

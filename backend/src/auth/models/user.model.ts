@@ -57,7 +57,13 @@ export class User {
 
   // Relación con el esquema Seller
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Seller', default: null })
-  seller: mongoose.Types.ObjectId | null; // Relación opcional con Seller
+  seller: mongoose.Types.ObjectId | null;
+
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ default: Date.now }) 
+  lastLogin: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
