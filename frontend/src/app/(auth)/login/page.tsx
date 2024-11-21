@@ -1,20 +1,56 @@
 "use client";
 import Form from "@/components/form/Form";
-import { loginUser } from "@/utils/authentications";
+import { useAuth } from "@/stores/userAuth";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+const getRedirectPath = (role: string) => {
+  switch (role) {
+    case "superadmin":
+      return "/superadmin";
+    case "admin":
+      return "/dashboard";
+    case "seller":
+      return "/seller";
+    default:
+      return "/user-dashboard";
+  }
+};
 const Login = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
-  const onSubmit = handleSubmit((data) => loginUser(data));
+  } = useForm<LoginFormData>();
+  const { login, isAuthenticated, isLoading, user } = useAuth();
+  const [loginError, setLoginError] = useState<string>("");
+  const router = useRouter();
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectPath = getRedirectPath(user.role);
+      router.replace(redirectPath);
+    }
+  }, [isAuthenticated, user, router]);
+  const onSubmit = handleSubmit(async (data) => {
+    setLoginError(""); // Clear previous errors
+    try {
+      await login(data.email, data.password);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setLoginError("Credenciales invalidas.");
+      console.log(error);
+    }
+  });
   return (
     <div className="bg-[url('/backgroundLogin.png')] w-screen h-[calc(1126px-309px)] bg-cover bg-no-repeat font-inter flex">
       <div className="w-1/2">
@@ -55,6 +91,11 @@ const Login = () => {
                 errorMessage="Debe ingresar un password"
               />
             </section>
+            <section className="pl-5 text-red-500">
+              {loginError !== "" && (
+                <p className="text-sm">{loginError} Intente nuevamente.</p>
+              )}
+            </section>
             <section className="text-center">
               <p className="text-xs font-medium">
                 Al registrarte, aceptas nuestras{" "}
@@ -71,8 +112,9 @@ const Login = () => {
                 size="lg"
                 className="mt-4"
                 type="submit"
+                disabled={isLoading}
               >
-                Login
+                {isLoading ? "iniciando sesión..." : "Login"}
               </Button>
             </section>
             <section className="flex flex-col items-center gap-4">
