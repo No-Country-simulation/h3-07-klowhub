@@ -38,10 +38,12 @@ export class UsersService {
               path: 'plan',
             },
           });
+          console.log(result);
       } else {
         result = await this.userModel
           .findById({ _id: user._id })
           .select('-password');
+          console.log(user);
       }
 
       if (!result) {
@@ -50,7 +52,6 @@ export class UsersService {
 
       return result;
     } catch (error) {
-      console.error('Error in getProfile:', error.message);
       throw new HttpException(error.message, 500);
     }
   }

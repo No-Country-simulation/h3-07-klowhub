@@ -36,4 +36,14 @@ export class EmailService {
     };
     return await this.transporter.sendMail(mailOptions);
   }
+
+  async sendEmailNotification (to: string, message: string) {
+    const mailOptions = {
+      from: 'KlowHub',
+      to,
+      subject: 'Notificación',
+      text: message,
+    };
+    return await this.transporter.sendMail(mailOptions);
+  }
 }
