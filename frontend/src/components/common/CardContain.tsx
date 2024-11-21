@@ -12,19 +12,24 @@ interface CardProps {
     children: React.ReactNode;
     cardFooter?: React.ReactNode
     height?: string;
+    heart?: boolean;
+    extraClassName?: string
 }
 
-const CardContain: FC<CardProps> = ({ size, type, urlImage, alt, title, children, cardFooter, height }) => {
+const CardContain: FC<CardProps> = ({ size, type, urlImage, alt, title, children, cardFooter, height, heart = true, extraClassName }) => {
     return (
-        <Card className={`shadow-lg bg-[#1F2937] text-white rounded-lg overflow-x-hidden 
-        ${size === "lg" ? "max-w-full" : size == "md" ? "max-w-md" : "max-w-[330px]"} ${height ?? "h-[549px]"}`}>
+        <Card className={`font-inter shadow-lg bg-[#1F2937] text-white rounded-lg overflow-x-hidden 
+        ${size === "lg" ? "w-11/12" : size == "md" ? "max-w-md" : "max-w-[330px]"} ${height ?? "h-[549px]"}
+        ${size === "lg" && "flex flex-row"}
+        ${extraClassName ?? ""}
+        `}>
 
             {/* Imagen y Etiqueta Superior */}
-            <CardBody className="p-0 relative">
+            <CardBody className="p-0 relative w-fit overflow-hidden">
                 <Image
                     src={urlImage}
-                    width="100%"
-                    height={200}
+                    width={size === "lg" ? "400px" : "100%"}
+                    height={size === "lg" ? 260 : 200}
                     className='objet-cover z-10'
                     alt={alt}
                     radius='none'
@@ -39,13 +44,19 @@ const CardContain: FC<CardProps> = ({ size, type, urlImage, alt, title, children
                     </Chip>
                 }
 
-                <div className="absolute top-2 right-2 z-20">
-                    <FontAwesomeIcon icon={faHeart} size="lg" className="hover:text-red-400 cursor-pointer transition-colors" />
-                </div>
+                {
+                    heart && (
+                        <div className="absolute top-2 right-2 z-20">
+                            <FontAwesomeIcon icon={faHeart} size="lg" className="hover:text-red-400 cursor-pointer transition-colors" />
+                        </div>
+                    )
+                }
             </CardBody>
 
             {/* Contenido de la Tarjeta */}
-            <CardBody className={`px-4 pt-3 pb-0 space-y-3 relative ${size === "md" ? "text-base" : "text-sm"}`}>
+            <CardBody
+                className={`px-4 pt-3 ${size === "lg" ? "pb-3" : "pb-0"} space-y-3 relative ${size === "md" ? "text-base" : "text-sm"}`}
+            >
                 <h5 className="font-bold leading-normal pr-4 text-ellipsis overflow-hidden text-nowrap"
                     title={title}>
                     {title}
