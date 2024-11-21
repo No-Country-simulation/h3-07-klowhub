@@ -55,6 +55,9 @@ const Header = () => {
         return menuExplorador;
     }
   };
+  /* useEffect(() => {
+    getProfile();
+  }, []); */
 
   const handleUserMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (user?.role === "user") {

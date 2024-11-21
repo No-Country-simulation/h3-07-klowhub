@@ -18,11 +18,11 @@ const getRedirectPath = (role: string) => {
     case "superadmin":
       return "/superadmin";
     case "admin":
-      return "/admin/dashboard";
+      return "/dashboard";
     case "seller":
       return "/seller";
     default:
-      return "/user/user-dashboard";
+      return "/user-dashboard";
   }
 };
 const Login = () => {
@@ -38,7 +38,6 @@ const Login = () => {
     if (isAuthenticated && user) {
       const redirectPath = getRedirectPath(user.role);
       router.replace(redirectPath);
-      router.push("/admin/dashboard");
     }
   }, [isAuthenticated, user, router]);
   const onSubmit = handleSubmit(async (data) => {

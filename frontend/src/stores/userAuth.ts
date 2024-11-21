@@ -49,7 +49,6 @@ export const useAuth = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push("/login");
   };
 
   const getRedirectPath = (role: string) => {

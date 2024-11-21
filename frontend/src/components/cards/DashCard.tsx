@@ -9,7 +9,7 @@ const DashCard = ({
 }) => {
   return (
     <div
-      className={`bg-white/10 rounded-lg flex flex-col items-center py-10 hover:shadow-2xl hover:bg-white/20 ${classNames}`}
+      className={`bg-white/10 rounded-lg flex flex-col hover:shadow-2xl hover:bg-white/20 ${classNames}`}
     >
       {children}
     </div>

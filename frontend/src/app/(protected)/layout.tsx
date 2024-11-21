@@ -5,12 +5,9 @@ import { useRouter } from "next/navigation";
 import { RootState } from "@/stores/store";
 import Header from "@/components/layout/Header";
 import { Suspense } from "react";
+import dynamic from "next/dynamic";
 
-export default function ProtectedLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
@@ -21,10 +18,13 @@ export default function ProtectedLayout({
 
   return (
     <>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense>
         <Header />
       </Suspense>
-      <main>{children}</main>
+      <main className="px-5">{children}</main>
     </>
   );
 }
+export default dynamic(() => Promise.resolve(ProtectedLayout), {
+  ssr: false,
+});

@@ -6,8 +6,6 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
   },
-  // Adding middleware for development tools
-  devTools: process.env.NODE_ENV !== "production",
 });
 
 // Export types for TypeScript
