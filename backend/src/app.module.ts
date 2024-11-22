@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DashboardModule } from './admin/dashboard/dashboard.module';
 import { NotificationsModule } from './admin/notifications/notifications.module';
 import { AdminUsersModule } from './admin/admin-users/admin-users.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { AdminUsersModule } from './admin/admin-users/admin-users.module';
     DashboardModule,
     NotificationsModule,
     AdminUsersModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
