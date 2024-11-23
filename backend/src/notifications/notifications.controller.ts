@@ -16,7 +16,7 @@ export class NotificationsController {
   findAll() {
     return this.notificationsService.findAll();
   }
-
+  //get notifications token
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.notificationsService.findOne(+id);

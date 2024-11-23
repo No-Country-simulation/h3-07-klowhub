@@ -14,18 +14,24 @@ import * as bcrypt from 'bcrypt';
 import { Seller, SellerDocument } from 'src/auth/models/seller.model';
 import { CreateSellerDto } from './dto/create-seller.dto';
 import { Plan, PlanDocument } from 'src/plans/models/plan.model';
-
+import { NotificationsService } from 'src/notifications/notifications.service';
+import {
+  findExistingUser,
+  findStarterPlan,
+  createNewSeller,
+  notifyAdmins,
+} from './functions/user.functions';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Seller.name) private sellerModel: Model<SellerDocument>,
     @InjectModel(Plan.name) private planModel: Model<PlanDocument>,
+    private readonly notificationService: NotificationsService,
   ) {}
 
   async getProfile(user: UserResponseDto) {
     try {
-
       let result;
 
       if (user.role === 'seller') {
@@ -38,12 +44,12 @@ export class UsersService {
               path: 'plan',
             },
           });
-          console.log(result);
+        console.log(result);
       } else {
         result = await this.userModel
           .findById({ _id: user._id })
           .select('-password');
-          console.log(user);
+        console.log(user);
       }
 
       if (!result) {
@@ -124,10 +130,16 @@ export class UsersService {
         projects: [],
         totalSales: 0,
         totalRevenue: 0,
+        isAuthorized: false,
       });
 
       const savedSeller = await newSeller.save();
-
+      // Crear notificación para los administradores
+      await notifyAdmins(
+        this.notificationService,
+        existingUser.username,
+        sellerData,
+      );
       // Actualizar el usuario
       existingUser.role = 'seller';
       existingUser.seller = savedSeller._id;

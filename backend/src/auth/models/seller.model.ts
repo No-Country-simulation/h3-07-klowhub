@@ -67,6 +67,9 @@ export class Seller {
 
   @Prop({ default: Date.now })
   updatedAt: Date;
+
+  @Prop({ default: false })
+  isAuthorized: boolean; // ¿Está autorizado para vender?
 }
 
 export const SellerSchema = SchemaFactory.createForClass(Seller);
