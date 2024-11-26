@@ -80,7 +80,7 @@ const Header = () => {
     logout();
   };
   return (
-    <header className="min-h-20 flex p-3 items-center gap-3 justify-between relative mt-5">
+    <header className="min-h-20 bg-[url('/assets/backgrounds/headerBackground.png')] flex px-3 items-center gap-3 justify-between relative pt-5">
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -89,10 +89,10 @@ const Header = () => {
         <div className="flex flex-col gap-4">
           <p className="text-sm">
             Al aceptar será dirigido al asistente para completar los
-            requerimientos para convertirse en un Vendedor!
+            requerimientos.
           </p>
         </div>
-        <div>
+        <div className="flex w-full justify-end gap-5 mt-6">
           <Button
             type="button"
             onClick={() => {
@@ -104,16 +104,17 @@ const Header = () => {
           <Button
             type="button"
             onClick={() => {
-              alert("convertido en vendedor");
+              router.push("/up-to-seller");
               closeModal();
             }}
+            className="bg-primario400 text-white hover:bg-primario600"
           >
             Quiero convertirme en Vendedor!
           </Button>
         </div>
       </Modal>
 
-      <div className="absolute h-full w-full bg-[#1F202699]/40 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 "></div>
+      <div className="absolute h-full w-full left-0 bg-[#1F202699]/40 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md "></div>
       <nav className="flex gap-2 xl:gap-6 items-center z-10">
         <Image
           src="/assets/icons/klowhub.png"
@@ -122,7 +123,7 @@ const Header = () => {
           width={50}
           className="text-xs"
         />
-        <NavLink url="/" text="Home" />
+        <NavLink url="#" text="Home" />
         {getCurrentMenu().map((menu) => (
           <NavLink key={menu.text} url={menu.url} text={menu.text} />
         ))}

@@ -3,17 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: linear-gradient(
-    45.46deg,
-    #34395c 11.78%,
-    #181941 41.8%,
-    #1b1b1f 87.01%
-  );
-  --foreground: #ffffff;
-}
-
-body {
+/* body {
   color: var(--foreground);
   background: var(--background);
   min-height: 100vh;
@@ -21,8 +11,10 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+} */
+html {
+  background-image: url(/backgroundLogin.png);
 }
-
 nextjs-portal {
   position: absolute;
 }

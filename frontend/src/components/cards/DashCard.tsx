@@ -3,13 +3,21 @@ import React from "react";
 const DashCard = ({
   children,
   classNames,
+  withHover,
+  withZoom,
 }: {
   children: React.ReactNode;
   classNames?: string;
+  withHover?: boolean;
+  withZoom?: boolean;
 }) => {
   return (
     <div
-      className={`bg-white/10 rounded-lg flex flex-col hover:shadow-2xl hover:bg-white/20 ${classNames}`}
+      className={`bg-white/5 rounded-lg flex flex-col hover:shadow-2xl border border-transparent ${
+        withZoom
+          ? "hover:scale-105 transition-all duration-250 hover:border hover:border-white"
+          : ""
+      } ${withHover ? "hover:bg-white/20" : ""} p-3 ${classNames} `}
     >
       {children}
     </div>

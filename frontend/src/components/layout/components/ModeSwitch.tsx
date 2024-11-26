@@ -4,18 +4,34 @@ import BuyerIcon from "./BuyerProfile";
 import { useState } from "react";
 import SalerIcon from "./SalerProfile";
 
-const ModeSwitch = () => {
+const ModeSwitch = ({
+  withIcons,
+  onChange,
+}: {
+  withIcons: boolean;
+  onChange?: (isSelected: boolean) => void;
+}) => {
   const [isSelected, setIsSelected] = useState(false);
+  const handleChange = (value: boolean) => {
+    setIsSelected(value);
+    // Update the data attribute on the parent element
+    const parent = document.querySelector(".billing-container");
+    if (parent) {
+      parent.setAttribute("data-billing-mode", value ? "annual" : "monthly");
+    }
+    // Call the onChange prop if provided
+    onChange?.(value);
+  };
   return (
     <Switch
       isSelected={isSelected}
-      onValueChange={setIsSelected}
+      onValueChange={handleChange}
       size="lg"
       color="success"
-      startContent={isSelected && <BuyerIcon className="white" />}
-      endContent={!isSelected && <SalerIcon className="white" />}
+      startContent={isSelected && withIcons && <BuyerIcon className="white" />}
+      endContent={!isSelected && withIcons && <SalerIcon className="white" />}
       thumbIcon={({ isSelected }) =>
-        isSelected ? <SalerIcon /> : <BuyerIcon />
+        withIcons ? isSelected ? <SalerIcon /> : <BuyerIcon /> : null
       }
       classNames={{
         base: "bg-transparent",

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev --turbopack",
+    "dev": "NODE_ENV=development next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -20,6 +20,12 @@
     "@nextui-org/system": "^2.2.6",
     "@nextui-org/theme": "^2.2.11",
     "@reduxjs/toolkit": "^2.3.0",
+    "@tiptap/extension-code-block-lowlight": "^2.10.2",
+    "@tiptap/extension-link": "^2.10.2",
+    "@tiptap/extension-placeholder": "^2.10.2",
+    "@tiptap/extension-text-align": "^2.10.2",
+    "@tiptap/react": "^2.10.2",
+    "@tiptap/starter-kit": "^2.10.2",
     "axios": "^1.7.7",
     "framer-motion": "^11.11.16",
     "js-cookie": "^3.0.5",

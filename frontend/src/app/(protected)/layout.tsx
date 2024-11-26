@@ -21,7 +21,7 @@ function ProtectedLayout({ children }: { children: React.ReactNode }) {
       <Suspense>
         <Header />
       </Suspense>
-      <main className="px-5">{children}</main>
+      <main className="px-5 pt-10">{children}</main>
     </>
   );
 }
