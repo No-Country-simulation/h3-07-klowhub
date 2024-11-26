@@ -1,4 +1,3 @@
-
 import {
   BadRequestException,
   HttpException,
@@ -59,11 +58,13 @@ export const createNewSeller = async (
 export const notifyAdmins = async (
   notificationService: NotificationsService,
   userName: string,
+  email: string,
   sellerData: CreateSellerDto,
 ): Promise<void> => {
   await notificationService.newAdminNotification(
     {
       userName,
+      email: email,
       message: 'ha solicitado ser vendedor',
       type: 'Solicitud de vendedor',
     },
@@ -77,8 +78,8 @@ export const notifyAdmins = async (
       <p><strong>Tipo:</strong> ${sellerData.sellerType}</p>
       <p><strong>Portafolio:</strong> 
         <a href="${sellerData.portfolioWebLink}" style="color: #2196F3;">${
-      sellerData.portfolioWebLink
-    }</a>
+          sellerData.portfolioWebLink
+        }</a>
       </p>
       <p><strong>Métodos de pago:</strong> ${sellerData.receivePayments.join(
         ', ',
@@ -92,9 +93,15 @@ export const notifyAdmins = async (
           sellerData.idImageBack
         }" style="color: #2196F3;">Trasera</a></li>
       </ul>
+      <p>
+        <a href="http://http://localhost:3000/api/admin-users/authorize-seller?email=${email}&action=approve" 
+           style="color: #4CAF50; text-decoration: none;">Autorizar</a> |
+        <a href="http://http://localhost:3000/api/admin-users/authorize-seller?email=${email}&action=reject" 
+           style="color: #F44336; text-decoration: none;">Denegar</a>
+      </p>
       <hr style="border: none; border-top: 1px solid #ddd;" />
       <p>Por favor, revisa esta solicitud en el panel de administración.</p>
     </div>
-  `,
+    `,
   );
 };

@@ -138,6 +138,7 @@ export class UsersService {
       await notifyAdmins(
         this.notificationService,
         existingUser.username,
+        existingUser.email,
         sellerData,
       );
       // Actualizar el usuario

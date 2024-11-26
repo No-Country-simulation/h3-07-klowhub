@@ -9,6 +9,9 @@ export class CreateAdminNotificationDto {
 
   @IsString()
   type: string;
+
+  @IsOptional()
+  email: string;
   /*   @IsOptional ()
   createdAt: Date;
   @IsOptional ()

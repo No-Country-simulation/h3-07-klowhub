@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AdminUsersService } from './admin-users.service';
 import { CreateAdminUserDto } from './dto/create-admin-user.dto';
 import { UpdateAdminUserDto } from './dto/update-admin-user.dto';
@@ -11,11 +21,17 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 export class AdminUsersController {
   constructor(private readonly adminUsersService: AdminUsersService) {}
 
-
   @Post('deactivate-inactive-users')
   deactivateInactiveUsers(@Query('months') months: string) {
     const monthsNumber = parseInt(months, 10) || 3;
     return this.adminUsersService.deactivateInactiveUsers(monthsNumber);
   }
 
+  @Get('authorize-seller')
+  authorizeSeller(
+    @Query('email') email: string,
+    @Query('action') action: string,
+  ) {
+    return this.adminUsersService.authorizeSeller(email, action);
+  }
 }
