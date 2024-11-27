@@ -1,34 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { PaymentMethod } from './entities/payment.entity';
 
-@Controller('payment')
+@Controller('payments')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
   @Post()
-  create(@Body() createPaymentDto: CreatePaymentDto) {
-    return this.paymentService.create(createPaymentDto);
+  async createPayment(
+    @Body('method') method: PaymentMethod,
+    @Body('amount') amount: number,
+    @Body('description') description: string,
+  ) {
+    return this.paymentService.createPayment(method, amount, description);
   }
 
-  @Get()
-  findAll() {
-    return this.paymentService.findAll();
+  @Post(':id/stripe')
+  async processStripe(
+    @Param('id') paymentId: string,
+    @Body('token') token: string,
+  ) {
+    return this.paymentService.processStripePayment(paymentId, token);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paymentService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
-    return this.paymentService.update(+id, updatePaymentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paymentService.remove(+id);
+  @Post(':id/bitcoin')
+  async processBitcoin(@Param('id') paymentId: string) {
+    return this.paymentService.processBitcoinPayment(paymentId);
   }
 }

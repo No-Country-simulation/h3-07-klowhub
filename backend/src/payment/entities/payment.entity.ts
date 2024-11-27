@@ -1,55 +1,50 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Schema } from '@nestjs/mongoose';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { IsNotEmpty, IsEnum, IsString, IsNumber } from 'class-validator';
 
-
-export enum PaymentMethod{
-    STRIPE ='stripe',
-    BITCOIN='bicoint',
+export enum PaymentMethod {
+  BITCOIN = 'bitcoin',
+  STRIPE = 'stripe',
 }
 
-export enum PymentStatus{
-    PENDING='pendind',
-    SUCCES='succes',
-    FAILED='failed',
-
+export enum PaymentStatus {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
 }
 
 @Entity('payments')
 export class Payment {
   @PrimaryGeneratedColumn('uuid')
-  id:string;
+  id: string;
 
-  @Column({type: 'enum', enum:PaymentMethod})
+  @Column({ type: 'enum', enum: PaymentMethod })
   @IsNotEmpty()
   @IsEnum(PaymentMethod)
-  method:PaymentMethod;
+  method: PaymentMethod;
 
-
-
-  @Column({type:'enum', enum:PymentStatus})
+  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
   @IsNotEmpty()
-  @IsEnum(PymentStatus)
-  status:PymentStatus
+  @IsEnum(PaymentStatus)
+  status: PaymentStatus;
 
-  @Column({type:'decimal', precision:10, scale:2})
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   @IsNotEmpty()
   @IsNumber()
-  amoun:number;
+  amount: number;
 
-  @Column({type:'varchar', length:255})
+  @Column({ type: 'varchar', length: 255 })
   @IsNotEmpty()
   @IsString()
-  description:string;
+  description: string;
 
-  @Column({type:'varchar', nullable:true})
+  @Column({ type: 'varchar', nullable: true })
   @IsString()
-  pymentGatewayResponse?:string
-  
+  paymentGatewayResponse?: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }
+

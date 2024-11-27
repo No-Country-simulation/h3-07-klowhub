@@ -13,6 +13,8 @@ import { DashboardModule } from './admin/dashboard/dashboard.module';
 import { NotificationsModule } from './admin/notifications/notifications.module';
 import { AdminUsersModule } from './admin/admin-users/admin-users.module';
 import { PaymentModule } from './payment/payment.module';
+import { Payment } from './payment/entities/payment.entity';
+
 
 @Module({
   imports: [
@@ -28,7 +30,7 @@ import { PaymentModule } from './payment/payment.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [],
+      entities: [Payment],
       synchronize: true,
       ssl: process.env.POSTGRES_SSL === 'true',
       extra: {
@@ -58,6 +60,7 @@ import { PaymentModule } from './payment/payment.module';
     NotificationsModule,
     AdminUsersModule,
     PaymentModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService],

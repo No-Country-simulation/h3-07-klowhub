@@ -1,26 +1,71 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Payment, PaymentMethod, PaymentStatus } from './entities/payment.entity';
+import Stripe from 'stripe';
 
 @Injectable()
 export class PaymentService {
-  create(createPaymentDto: CreatePaymentDto) {
-    return 'This action adds a new payment';
+  private readonly stripe: Stripe;
+
+  constructor(
+    @InjectRepository(Payment) private readonly paymentRepository: Repository<Payment>,
+  ) {
+    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-11-20.acacia',
+    });
   }
 
-  findAll() {
-    return `This action returns all payment`;
+  async createPayment(method: PaymentMethod, amount: number, description: string): Promise<Payment> {
+    if (amount <= 0) {
+      throw new BadRequestException('Amount must be greater than zero.');
+    }
+
+    const payment = this.paymentRepository.create({
+      method,
+      amount,
+      description,
+    });
+
+    return this.paymentRepository.save(payment);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} payment`;
+  async processStripePayment(paymentId: string, token: string): Promise<Payment> {
+    const payment = await this.paymentRepository.findOne({ where: { id: paymentId } });
+
+    if (!payment || payment.method !== PaymentMethod.STRIPE) {
+      throw new BadRequestException('Invalid payment or method.');
+    }
+
+    try {
+      const charge = await this.stripe.charges.create({
+        amount: Math.round(payment.amount * 100), // Stripe expects amounts in cents
+        currency: 'usd',
+        description: payment.description,
+        source: token,
+      });
+
+      payment.status = PaymentStatus.COMPLETED;
+      payment.paymentGatewayResponse = JSON.stringify(charge);
+    } catch (error) {
+      payment.status = PaymentStatus.FAILED;
+      payment.paymentGatewayResponse = JSON.stringify(error.message);
+    }
+
+    return this.paymentRepository.save(payment);
   }
 
-  update(id: number, updatePaymentDto: UpdatePaymentDto) {
-    return `This action updates a #${id} payment`;
-  }
+  async processBitcoinPayment(paymentId: string): Promise<Payment> {
+    const payment = await this.paymentRepository.findOne({ where: { id: paymentId } });
 
-  remove(id: number) {
-    return `This action removes a #${id} payment`;
+    if (!payment || payment.method !== PaymentMethod.BITCOIN) {
+      throw new BadRequestException('Invalid payment or method.');
+    }
+
+    // Simulate Bitcoin payment process
+    payment.status = PaymentStatus.COMPLETED;
+    payment.paymentGatewayResponse = 'Bitcoin payment processed successfully';
+
+    return this.paymentRepository.save(payment);
   }
 }
