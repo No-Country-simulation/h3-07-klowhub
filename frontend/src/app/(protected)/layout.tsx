@@ -1,30 +1,15 @@
-"use client";
-
-import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
-import { RootState } from "@/stores/store";
 import Header from "@/components/layout/Header";
-import { Suspense } from "react";
-import dynamic from "next/dynamic";
+import AuthCheck from "./ClientProvider";
 
-function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const router = useRouter();
-
-  if (!isAuthenticated) {
-    router.push("/login");
-    return null;
-  }
-
+export default function ProtectedLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <>
-      <Suspense>
-        <Header />
-      </Suspense>
+    <AuthCheck>
+      <Header />
       <main className="px-5 pt-10">{children}</main>
-    </>
+    </AuthCheck>
   );
 }
-export default dynamic(() => Promise.resolve(ProtectedLayout), {
-  ssr: false,
-});

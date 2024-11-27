@@ -6,6 +6,8 @@ import DashCard from "@/components/cards/DashCard";
 import { Divider, Select, SelectItem, Switch } from "@nextui-org/react";
 import CardShopMembership from "@/components/cards/shop/CardShopMembership";
 import { useEffect, useState } from "react";
+import { TiptapEditor } from "./TextEditor";
+import UploadFileInput from "./UploadFileInput";
 
 type Inputs = {
   period: boolean;
@@ -28,6 +30,7 @@ const SellerUpgradeForm = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     control,
     formState: { errors },
   } = useForm<Inputs>({
@@ -58,6 +61,10 @@ const SellerUpgradeForm = () => {
       price: "$19,99",
     },
   ];
+  const handleEditorChange = (content: string) => {
+    setValue("description", content);
+  };
+
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
       console.log("Form values:", value);
@@ -245,51 +252,69 @@ const SellerUpgradeForm = () => {
               plataforma.
             </p>
           </section>
-          <section className="grid grid-cols-2">
-            <div className="gap-4">
+          <section className="grid grid-cols-2 gap-6">
+            <div className="gap-4 relative mr-6">
               <h2 className="font-bold mb-6">
                 Selecciona el tipo de vendedor que eres.
               </h2>
-              <Controller
-                name="sellerType"
-                control={control}
-                rules={{ required: "Este campo es requerido" }}
-                render={({ field, fieldState: { error } }) => (
-                  <Select
-                    {...field}
-                    label="Tipo de vendedor"
-                    placeholder="Selecciona una opción"
-                    className="max-w-xs"
-                    variant="faded"
-                    isInvalid={!!error}
-                    errorMessage={error?.message}
-                    classNames={{
-                      trigger: "h-10",
-                      value: "text-small text-black",
-                      label: "text-small font-medium",
-                    }}
-                  >
-                    {[
-                      { value: "developer", label: "Desarrollador de apps" },
-                      {
-                        value: "contentCreator",
-                        label: "Creador de contenido educativo",
-                      },
-                      { value: "developerTeam", label: "Equipo de desarrollo" },
-                      { value: "appsheetExpert", label: "Experto en AppSheet" },
-                      { value: "other", label: "Otro" },
-                    ].map((item) => (
-                      <SelectItem
-                        className="text-black hover:bg-primario200 "
-                        key={item.value}
-                        value={item.value}
-                      >
-                        {item.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                )}
-              />
+              <div className="relative">
+                <Controller
+                  name="sellerType"
+                  control={control}
+                  rules={{ required: "Este campo es requerido" }}
+                  render={({ field, fieldState: { error } }) => (
+                    <Select
+                      {...field}
+                      label="Tipo de vendedor"
+                      placeholder="Selecciona una opción"
+                      className="max-w-xs"
+                      variant="faded"
+                      isInvalid={!!error}
+                      errorMessage={error?.message}
+                      classNames={{
+                        trigger: "h-10",
+                        value: "text-small text-black",
+                        label: "text-small font-medium",
+                      }}
+                      popoverProps={{
+                        defaultOpen: false,
+                        shouldFlip: false,
+                        placement: "bottom",
+                        isKeyboardDismissDisabled: true,
+                        classNames: {
+                          base: "!z-50",
+                          content: "!z-50",
+                        },
+                      }}
+                    >
+                      {[
+                        { value: "developer", label: "Desarrollador de apps" },
+                        {
+                          value: "contentCreator",
+                          label: "Creador de contenido educativo",
+                        },
+                        {
+                          value: "developerTeam",
+                          label: "Equipo de desarrollo",
+                        },
+                        {
+                          value: "appsheetExpert",
+                          label: "Experto en AppSheet",
+                        },
+                        { value: "other", label: "Otro" },
+                      ].map((item) => (
+                        <SelectItem
+                          className="text-black hover:bg-primario200 "
+                          key={item.value}
+                          value={item.value}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+              </div>
               <h2 className="mt-8 font-bold">
                 Escribe una breve descripción de ti o de tu empresa
               </h2>
@@ -298,11 +323,128 @@ const SellerUpgradeForm = () => {
                 visiten tu perfil. Te recomendamos incluir tus áreas de
                 experiencia y los tipos de soluciones que ofreces.
               </p>
+              <div className="w-full">
+                <TiptapEditor onChange={handleEditorChange} />
+              </div>
+
+              <h2 className="font-bold my-6">
+                Añade un enlace a tu portafolio o sitio web{" "}
+                <span className="text-slate-400">(Opcional)</span>
+              </h2>
+              <p className="my-6 text-sm">
+                Si tienes un portafolio en línea, este es el lugar perfecto para
+                destacarlo y mostrar tu trabajo a posibles compradores.
+              </p>
+              <div>
+                <label
+                  className="bg-transparent border border-primario300 rounded-bl-lg rounded-tl-lg text-primario200 px-4 py-3 text-sm font-semibold"
+                  htmlFor="portfolio"
+                >
+                  Enlace
+                </label>
+                <input
+                  className="rounded-tr-lg rounded-br-lg px-4 py-3 text-sm text-black w-2/6"
+                  name="portfolio"
+                  id="portfolio"
+                />
+              </div>
+              <h2 className="font-bold my-6">
+                Selecciona tu método de cobro preferido.
+              </h2>
+              <p className="my-6 text-sm">
+                Elige cómo te gustaría recibir los pagos de tus ventas.
+              </p>
+              <div className="relative overflow-visible">
+                <Controller
+                  name="preferedPaymentMethod"
+                  control={control}
+                  rules={{ required: "Este campo es requerido" }}
+                  render={({ field, fieldState: { error } }) => (
+                    <Select
+                      {...field}
+                      label="Selecciona tu método de cobro"
+                      placeholder="Selecciona una opción"
+                      className="max-w-xs h-60"
+                      variant="faded"
+                      isInvalid={!!error}
+                      errorMessage={error?.message}
+                      classNames={{
+                        trigger: "h-10",
+                        value: "text-small text-black",
+                        label: "text-small font-medium",
+                      }}
+                      popoverProps={{
+                        defaultOpen: false,
+                        shouldFlip: false,
+                        placement: "bottom",
+                        isKeyboardDismissDisabled: true,
+                        classNames: {
+                          base: "!z-50",
+                          content: "!z-50",
+                        },
+                      }}
+                    >
+                      {[
+                        { value: "crypto", label: "Criptomonedas" },
+                        {
+                          value: "paypal",
+                          label: "PayPal",
+                        },
+                        { value: "strype", label: "Strype" },
+                      ].map((item) => (
+                        <SelectItem
+                          className="text-black hover:bg-primario200 "
+                          key={item.value}
+                          value={item.value}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+              </div>
             </div>
-            <div></div>
+            <div className="w-full">
+              <h2 className="font-bold mb-6">Verifica tu identidad</h2>
+              <p className="text-sm my-6">
+                Por razones de seguridad, necesitamos validar tu identidad antes
+                de activar tu cuenta de vendedor. Asegúrate de que la imagen sea
+                clara y legible.
+              </p>
+              <p className="text-sm my-6">
+                (Sube una imagen de tu documento de identidad (DNI, pasaporte o
+                licencia de conducir))
+              </p>
+              <div className="flex w-full gap-3 justify-center">
+                <UploadFileInput
+                  setValue={setValue}
+                  fieldName="idFront"
+                  detalleImagen="parte delantera de tu documento"
+                  error={errors.idFront?.message as string}
+                />
+                <UploadFileInput
+                  setValue={setValue}
+                  fieldName="idBack"
+                  detalleImagen="parte trasera de tu documento"
+                  error={errors.idBack?.message as string}
+                />
+              </div>
+              <p className="text-sm font-semibold text-center my-6">
+                Asegúrate de que toda la información sea visible
+              </p>
+            </div>
           </section>
         </DashCard>
       )}
+      <div className="w-full flex justify-end py-6">
+        <Button
+          variant="solid"
+          className="bg-primario500 text-white text-sm font-semibold px-12"
+        >
+          Pagar membresía
+        </Button>
+      </div>
     </form>
   );
 };
