@@ -5,7 +5,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { createLowlight } from "lowlight";
-import { Button } from "@nextui-org/button";
+
 import AlignLeftIcon from "@/components/editor/icons/AlignLeft";
 import AlignRightIcon from "@/components/editor/icons/AlignRight";
 import AlignCenterIcon from "@/components/editor/icons/AlignCenter";

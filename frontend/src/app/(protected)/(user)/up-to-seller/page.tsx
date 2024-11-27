@@ -1,7 +1,7 @@
 import Image from "next/image";
 import SellerUpgradeForm from "./components/Form";
 
-const page = () => {
+const Page = () => {
   return (
     <div>
       <div className="relative w-full h-[200px] mb-12">
@@ -12,4 +12,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
