@@ -4,6 +4,7 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
 import { Repository } from 'typeorm';
+import { UserResponseDto } from 'src/auth/dto/login-response-dto';
 
 @Injectable()
 export class CoursesService {
@@ -12,9 +13,25 @@ export class CoursesService {
     private courseRepository: Repository<Course>,
   ) {}
 
-  create(createCourseDto: CreateCourseDto) {
+  async create(userId: UserResponseDto, createCourseDto: CreateCourseDto) {
     try {
-      return 'This action adds a new course';
+      const { courseName } = createCourseDto;
+      console.log(userId);
+      // Crear una nueva instancia de curso
+      const newCourse = this.courseRepository.create({
+        courseName,
+        ownerId: userId._id,
+        ownerEmail: userId.email,
+        isActivated: true,
+        pendingApproval: true,
+        courseType: 'course',
+        courseLevel: 'beginner',
+        language: 'English',
+      });
+      if (!newCourse) {
+        return { message: 'Error creating course' };
+      }
+      return await this.courseRepository.save(newCourse);
     } catch (error) {
       console.log(error);
     }

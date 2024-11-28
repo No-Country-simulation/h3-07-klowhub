@@ -81,9 +81,7 @@ export const notifyAdmins = async (
           sellerData.portfolioWebLink
         }</a>
       </p>
-      <p><strong>Métodos de pago:</strong> ${sellerData.receivePayments.join(
-        ', ',
-      )}</p>
+      <p><strong>Métodos de pago:</strong> ${sellerData.receivePayments}</p>
       <p><strong>Documentos de identificación:</strong></p>
       <ul>
         <li><a href="${
