@@ -36,4 +36,24 @@ export class EmailService {
     };
     return await this.transporter.sendMail(mailOptions);
   }
+
+  async sendEmailNotification(to: string, message: string) {
+    const mailOptions = {
+      from: 'KlowHub',
+      to,
+      subject: 'Notificación',
+      text: message,
+    };
+    return await this.transporter.sendMail(mailOptions);
+  }
+
+  async sendToAdminEmailNotification(to: string, subject: string, htmlContent: string) {
+    const mailOptions = {
+      from: 'KlowHub <no-reply@klowhub.com>',
+      to,
+      subject,
+      html: htmlContent, // Usar el contenido HTML
+    };
+    return await this.transporter.sendMail(mailOptions);
+  }
 }

@@ -10,8 +10,11 @@ import { ImagesModule } from './media/images.module';
 import { PlansModule } from './plans/plans.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DashboardModule } from './admin/dashboard/dashboard.module';
-import { NotificationsModule } from './admin/notifications/notifications.module';
+
 import { AdminUsersModule } from './admin/admin-users/admin-users.module';
+import { GateWayModule } from './websockets/websocket.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { CoursesModule } from './courses/courses.module';
 
 @Module({
   imports: [
@@ -27,7 +30,7 @@ import { AdminUsersModule } from './admin/admin-users/admin-users.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [],
+      autoLoadEntities: true,
       synchronize: true,
       ssl: process.env.POSTGRES_SSL === 'true',
       extra: {
@@ -56,6 +59,8 @@ import { AdminUsersModule } from './admin/admin-users/admin-users.module';
     DashboardModule,
     NotificationsModule,
     AdminUsersModule,
+    GateWayModule,
+    CoursesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,6 +5,22 @@ import { Seller } from './seller.model';
 export type UserDocument = User & Document;
 
 @Schema()
+export class Notification {
+  @Prop({ required: true })
+  message: string;
+
+  @Prop({ required: true })
+  type: string;
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
+
+  @Prop({ default: false })
+  read: boolean;
+}
+const NotificationSchema = SchemaFactory.createForClass(Notification);
+
+@Schema()
 export class User {
   @Prop({ required: true })
   username: string;
@@ -62,8 +78,12 @@ export class User {
   @Prop({ default: true })
   isActive: boolean;
 
-  @Prop({ default: Date.now }) 
+  @Prop({ default: Date.now })
   lastLogin: Date;
+
+  @Prop({ type: [NotificationSchema], default: [] })
+  notifications: Notification[];
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
