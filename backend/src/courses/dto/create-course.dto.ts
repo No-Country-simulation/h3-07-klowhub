@@ -73,6 +73,20 @@ export class CreateCourseDto {
   @IsNotEmpty({ message: 'El numero de sector no puede estar vacio' })
   sectorId: number;
 
+  @IsString()
+  whatYouWillLearn: string;
+
+  @IsString()
+  requirements: string;
+
+  @IsArray()
+  detailedDescription: string[];
+
+  @IsArray()
+  benefits: string[];
+
+  @IsString()
+  coverImageUrl: string;
   @IsArray()
   @ValidateNested({ each: true }) // Validar cada módulo
   @Type(() => ModulsDto) // Especificar el tipo de los módulos
