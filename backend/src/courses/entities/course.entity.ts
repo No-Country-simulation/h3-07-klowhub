@@ -9,7 +9,7 @@ import {
   JoinTable,
   ManyToMany,
 } from 'typeorm';
-import { Category } from './category.entity';
+import { Sector } from './sector.entity';
 
 @Entity()
 export class Course {
@@ -19,10 +19,10 @@ export class Course {
   @Column({ type: 'varchar', length: 120 })
   courseName: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   courseDescription: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 30 })
   ownerId: string;
 
   @Column({ type: 'varchar', length: 120 })
@@ -62,18 +62,30 @@ export class Course {
   @Column({ type: 'varchar', length: 50, default: 'English' })
   language: string;
 
-  @ManyToOne(() => Category)
-  category: Category;
-
-  @Column({ type: 'simple-array', nullable: true })
-  contentTypes: string[];
-
-  @Column({ type: 'simple-array', nullable: true })
-  tools: string[];
+  @Column({ type: 'varchar', length: 120, nullable: true })
+  pilar: string;
 
   @Column({ type: 'simple-array', nullable: true })
   hashtags: string[];
 
+  @Column({ type: 'simple-array', nullable: true })
+  contentTypes: string[];
+
+  @Column({ type: 'varchar', length: 240, nullable: true })
+  requirements: string;
+
+  @ManyToOne(() => Sector)
+  sector: Sector;
+
+  @Column({ type: 'simple-array', nullable: true })
+  tools: string[];
+  
+  @Column({ type: 'simple-array', nullable: true })
+  functionalities: string[];
+
+
+  
+  /*
   @Column({ type: 'json', nullable: true })
   functionalities: Record<string, any>;
 
@@ -102,5 +114,5 @@ export class Course {
   coverImageUrl: string;
 
   @ManyToOne(() => Course, (course) => course.id)
-  parentCourse: Course;
+  parentCourse: Course; */
 }
