@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/stores/userAuth";
 import NavLink from "./NavLink";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../modals/Modal";
 import { Button } from "@nextui-org/button";
 import Image from "next/image";
@@ -67,6 +67,9 @@ export default function HeaderClient() {
       return;
     }
   };
+  useEffect(() => {
+    if (user?.role === "seller") setIsCreatorMode(true);
+  }, [user?.role]);
 
   const handleLogout = () => {
     logout();
