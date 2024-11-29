@@ -25,7 +25,7 @@ export const upgradeUser = async (data: Inputs) => {
       profileDescription: data.description,
       sellerType: data.sellerType,
       portfolioWebLink: data.portfolio,
-      receivePayments: [data.preferedPaymentMethod],
+      receivePayments: data.preferedPaymentMethod,
       idImageFront: data.idFront,
       idImageBack: data.idBack,
     },
