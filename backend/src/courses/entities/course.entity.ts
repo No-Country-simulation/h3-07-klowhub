@@ -71,7 +71,7 @@ export class Course {
   @Column({ type: 'simple-array', nullable: true })
   contentTypes: string[];
 
-  @Column({ type: 'varchar', length: 240, nullable: true })
+  @Column({ type: 'varchar', length: 400, nullable: true })
   requirements: string;
 
   @ManyToOne(() => Sector)
@@ -79,11 +79,21 @@ export class Course {
 
   @Column({ type: 'simple-array', nullable: true })
   tools: string[];
-  
+
   @Column({ type: 'simple-array', nullable: true })
   functionalities: string[];
 
+  @Column({ type: 'text', nullable: true })
+  whatYouWillLearn: string;
 
+  @Column({ type: 'simple-array', nullable: true })
+  detailedDescription: string[];
+
+  @Column({ type: 'simple-array', nullable: true })
+  benefits: string[];
+
+  @Column({ type: 'text', nullable: true })
+  coverImageUrl: string;
   
   /*
   @Column({ type: 'json', nullable: true })
