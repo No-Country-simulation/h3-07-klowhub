@@ -1,4 +1,6 @@
-const BoldIcon = (props) => (
+import { SVGProps } from "react";
+
+const BoldIcon = ({ props }: { props?: SVGProps<SVGSVGElement> }) => (
   <svg
     width="16px"
     height="16px"

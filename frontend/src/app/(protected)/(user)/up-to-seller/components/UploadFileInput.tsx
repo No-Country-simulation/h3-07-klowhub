@@ -21,26 +21,27 @@ const UploadFileInput = ({
   const [isUploading, setIsUploading] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
 
-  const uploadFile = async (file: File) => {
-    try {
-      setIsUploading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      const respuesta = await HandleFileUpload(formData);
-      setValue(fieldName, respuesta.imageUrl);
-      setIsUploaded(true);
-    } catch (error) {
-      console.log("Error en la carga:", error);
-      setIsUploaded(false);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles?.length) {
-      await uploadFile(acceptedFiles[0]);
-    }
-  }, []);
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      if (acceptedFiles?.length) {
+        try {
+          setIsUploading(true);
+          const formData = new FormData();
+          formData.append("file", acceptedFiles[0]);
+          const respuesta = await HandleFileUpload(formData);
+          setValue(fieldName, respuesta.imageUrl);
+          setIsUploaded(true);
+        } catch (error) {
+          console.log("Error en la carga:", error);
+          setIsUploaded(false);
+        } finally {
+          setIsUploading(false);
+        }
+      }
+    },
+    [fieldName, setValue]
+  );
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "image/jpeg": [".jpg", ".jpeg"] },

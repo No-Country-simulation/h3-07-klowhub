@@ -1,4 +1,6 @@
-const AlignCenterIcon = (props) => (
+import { SVGProps } from "react";
+
+const AlignCenterIcon = ({ props }: { props?: SVGProps<SVGSVGElement> }) => (
   <svg
     width="12px"
     height="12px"

@@ -1,4 +1,6 @@
-const StrikeIcon = (props) => (
+import { SVGProps } from "react";
+
+const StrikeIcon = ({ props }: { props?: SVGProps<SVGSVGElement> }) => (
   <svg
     width="12px"
     height="12px"

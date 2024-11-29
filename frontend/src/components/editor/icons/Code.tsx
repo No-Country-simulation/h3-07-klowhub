@@ -1,4 +1,6 @@
-const CodeIcon = (props) => (
+import { SVGProps } from "react";
+
+const CodeIcon = ({ props }: { props?: SVGProps<SVGSVGElement> }) => (
   <svg
     width="20px"
     height="20px"

@@ -1,4 +1,6 @@
-const AlignLeftIcon = (props) => (
+import { SVGProps } from "react";
+
+const AlignLeftIcon = ({ props }: { props?: SVGProps<SVGSVGElement> }) => (
   <svg
     width="12px"
     height="12px"

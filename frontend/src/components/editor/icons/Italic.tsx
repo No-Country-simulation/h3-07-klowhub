@@ -1,4 +1,6 @@
-const ItalicIcon = (props) => (
+import { SVGProps } from "react";
+
+const ItalicIcon = ({ props }: { props?: SVGProps<SVGSVGElement> }) => (
   <svg
     width="12px"
     height="12px"

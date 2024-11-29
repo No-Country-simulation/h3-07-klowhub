@@ -3,15 +3,28 @@ import { Button } from "@nextui-org/button";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import SvgCheck from "./SvgCheck";
 import DashCard from "@/components/cards/DashCard";
-import { Select, SelectItem, Switch } from "@nextui-org/react";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+  Switch,
+} from "@nextui-org/react";
 import CardShopMembership from "@/components/cards/shop/CardShopMembership";
 import { useEffect, useState } from "react";
 import { TiptapEditor } from "./TextEditor";
 import UploadFileInput from "./UploadFileInput";
 import Divider from "@/components/divider/Divider";
 import Image from "next/image";
+import { upgradeUser } from "@/utils/user";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 
-type Inputs = {
+export type Inputs = {
+  name: string;
   period: boolean;
   planType: string;
   sellerType: string;
@@ -33,16 +46,36 @@ const SellerUpgradeForm = () => {
     handleSubmit,
     watch,
     setValue,
+    setError,
     control,
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
       planType: "Starter",
       period: false,
+      name: "Rafael",
     },
   });
-  const [step, setStep] = useState<steps>(steps.data);
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const [step, setStep] = useState<steps>(steps.suscriptiontype);
+  const [success, setSuccess] = useState<boolean>(false);
+  const router = useRouter();
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    try {
+      const respuesta = await upgradeUser(data);
+      if (respuesta.data.statusCode === 500) {
+        setSuccess(true);
+      } else {
+        alert("Error al actualizar el usuario");
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const axiosError = error as AxiosError;
+        if (axiosError.status === 500) {
+          alert("Error al actualizar el usuario. Usuario ya es vendedor");
+        }
+      }
+    }
+  };
   const planes = [
     {
       id: 1,
@@ -65,6 +98,37 @@ const SellerUpgradeForm = () => {
   ];
   const handleEditorChange = (content: string) => {
     setValue("description", content);
+  };
+  const handlePayMembership = () => {
+    let hasErrors = false;
+
+    if (!watch("sellerType")) {
+      setError("sellerType", {
+        type: "required",
+        message: "Seller type is required",
+      });
+      hasErrors = true;
+    }
+
+    if (!watch("description")) {
+      setError("description", {
+        type: "required",
+        message: "Description is required",
+      });
+      hasErrors = true;
+    }
+
+    if (!watch("preferedPaymentMethod")) {
+      setError("preferedPaymentMethod", {
+        type: "required",
+        message: "Payment method is required",
+      });
+      hasErrors = true;
+    }
+
+    if (!hasErrors) {
+      setStep(steps.payment);
+    }
   };
 
   useEffect(() => {
@@ -292,19 +356,19 @@ const SellerUpgradeForm = () => {
                       >
                         {[
                           {
-                            value: "developer",
+                            value: "Desarrollador de apps",
                             label: "Desarrollador de apps",
                           },
                           {
-                            value: "contentCreator",
+                            value: "Creador de contenido educativo",
                             label: "Creador de contenido educativo",
                           },
                           {
-                            value: "developerTeam",
+                            value: "Equipo de desarrollo",
                             label: "Equipo de desarrollo",
                           },
                           {
-                            value: "appsheetExpert",
+                            value: "AppSheet Expert",
                             label: "Experto en AppSheet",
                           },
                           { value: "other", label: "Otro" },
@@ -391,12 +455,12 @@ const SellerUpgradeForm = () => {
                         }}
                       >
                         {[
-                          { value: "crypto", label: "Criptomonedas" },
+                          { value: "Crypto", label: "Criptomonedas" },
                           {
-                            value: "paypal",
+                            value: "Paypal",
                             label: "PayPal",
                           },
-                          { value: "strype", label: "Strype" },
+                          { value: "Strype", label: "Strype" },
                         ].map((item) => (
                           <SelectItem
                             className="text-black hover:bg-primario200 "
@@ -444,7 +508,7 @@ const SellerUpgradeForm = () => {
           </DashCard>
           <div className="w-full flex justify-end py-6">
             <Button
-              onClick={() => setStep(steps.payment)}
+              onClick={handlePayMembership}
               variant="solid"
               className="bg-primario500 text-white text-sm font-semibold px-12 rounded-lg"
             >
@@ -512,33 +576,83 @@ const SellerUpgradeForm = () => {
               <div className="py-6 text-sm font-semibold">
                 <p>Selecciona un método de pago</p>
                 <div className="pt-6 flex gap-4 h-20">
-                  <Image
-                    src="/assets/icons/platforms/Stripe.png"
-                    alt="stripe"
-                    width={100}
-                    height={80}
-                    className="bg-white rounded-lg hover:brightness-95 hover:scale-105"
-                  />
-                  <Image
-                    className="bg-white rounded-lg py-2 px-4 hover:brightness-95 hover:scale-105"
-                    src="/assets/icons/platforms/PayPal.png"
-                    alt="stripe"
-                    width={100}
-                    height={80}
-                  />
-                  <Image
-                    src="/assets/icons/platforms/Etherium.png"
-                    className="bg-white rounded-lg hover:brightness-95 hover:scale-105"
-                    alt="stripe"
-                    width={100}
-                    height={80}
-                  />
+                  <button type="submit">
+                    <Image
+                      src="/assets/icons/platforms/Stripe.png"
+                      alt="stripe"
+                      width={100}
+                      height={80}
+                      className="bg-white rounded-lg hover:brightness-95 hover:scale-105"
+                    />
+                  </button>
+                  <button type="submit">
+                    <Image
+                      className="bg-white rounded-lg py-2 px-4 hover:brightness-95 hover:scale-105"
+                      src="/assets/icons/platforms/PayPal.png"
+                      alt="stripe"
+                      width={100}
+                      height={80}
+                    />
+                  </button>
+                  <button type="submit">
+                    <Image
+                      src="/assets/icons/platforms/Etherium.png"
+                      className="bg-white rounded-lg hover:brightness-95 hover:scale-105"
+                      alt="stripe"
+                      width={100}
+                      height={80}
+                    />
+                  </button>
                 </div>
               </div>
             </DashCard>
           </section>
         </div>
       )}
+      <Modal isOpen={success} onOpenChange={setSuccess} placement="center">
+        <ModalContent className="bg-[#1F2937] px-14 py-16 text-center  max-w-[600px]">
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 font-bold">
+                ¡Bienvenido al plan Starter!
+              </ModalHeader>
+              <ModalBody className="items-center">
+                <p className="text-xs">
+                  Gracias por suscribirte al plan starter. Ahora tienes acceso
+                  al uso de plantillas predefinidas. ¡Empieza a explorar todas
+                  las ventajas hoy mismo!
+                </p>
+                <Image
+                  src="/assets/icons/success.png"
+                  alt="success-icon"
+                  width={100}
+                  height={100}
+                  className="pt-6"
+                />
+              </ModalBody>
+              <ModalFooter className="flex flex-col items-center">
+                <Button
+                  variant="solid"
+                  onPress={() => {
+                    onClose();
+                    router.push("/seller-dashboard");
+                  }}
+                  className="min-w-80 bg-primario500 text-white"
+                >
+                  Acceder al Dashboard
+                </Button>
+                <Button
+                  variant="bordered"
+                  onPress={onClose}
+                  className="min-w-80 border-primario400 text-primario400"
+                >
+                  Ver mis beneficios
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </form>
   );
 };
