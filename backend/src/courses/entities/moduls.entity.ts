@@ -1,8 +1,8 @@
-import { Column, Entity } from 'typeorm';
+/* import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Moduls {
-  @Column({ primary: true, generated: true })
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ length: 255 })
@@ -22,5 +22,5 @@ export class Moduls {
 
   @Column({ type: 'text', nullable: true })
   lessonVideo: string;
-
 }
+ */

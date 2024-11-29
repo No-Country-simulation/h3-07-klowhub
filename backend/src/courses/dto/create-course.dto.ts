@@ -11,6 +11,7 @@ import {
   IsObject,
   IsPositive,
   ValidateNested,
+  IsInt,
 } from 'class-validator';
 import { ModulsDto } from './moduls.dto';
 
@@ -19,68 +20,70 @@ export class CreateCourseDto {
   @IsNotEmpty()
   courseName: string;
 
-  @IsString()
-  @IsOptional()
-  courseDescription?: string;
+  @IsString({ message: 'La descripción del curso debe ser un texto' })
+  courseDescription: string;
 
   @IsString()
-  @IsOptional()
-  platform?: string;
+  @IsEnum(['AppSheet', 'PowerApps'])
+  @IsNotEmpty({
+    message:
+      'La plataforma del curso no puede estar vacia, Enum: Mobile, Web, Desktop',
+  })
+  platform: string;
 
   @IsString()
-  @IsOptional()
-  language?: string;
+  @IsEnum(['English', 'Spanish', 'Portuguese', 'French'])
+  @IsNotEmpty({ message: 'El idioma del curso no puede estar vacio' })
+  language: string;
 
   @IsEnum(['beginner', 'intermediate', 'advanced'])
-  @IsOptional()
-  courseLevel?: string;
+  @IsNotEmpty({ message: 'El nivel del curso no puede estar vacio' })
+  courseLevel: string;
 
   @IsBoolean()
   @IsOptional()
   isFree?: boolean;
 
   @IsNumber()
-  @IsOptional()
-  @IsPositive()
-  coursePrice?: number;
+  @IsNotEmpty({ message: 'El precio del curso no puede estar vacio' })
+  coursePrice: number;
 
   @IsEnum(['course', 'lesson'])
-  @IsOptional()
-  courseType?: string;
+  @IsNotEmpty({ message: 'El tipo de curso no puede estar vacio' })
+  courseType: string;
 
   @IsArray()
   @IsOptional()
   contentTypes?: string[];
 
+  @IsString()
+  @IsNotEmpty()
+  pilar: string;
+
   @IsArray()
-  @IsOptional()
   tools?: string[];
 
   @IsArray()
-  @IsOptional()
-  hashtags?: string[];
+  hashtags: string[];
 
-  @IsObject()
-  @IsOptional()
-  functionalities?: Record<string, any>;
+  @IsArray()
+  functionalities: string[];
 
-  @IsObject()
-  @IsOptional()
-  promotionalPackages?: {
-    includedCourses: number[];
-    discountPercentage: number;
-  }[];
-
-  @IsObject()
-  @IsOptional()
-  category?: {
-    mainCategory: string;
-    subCategories: string[];
-  };
+  @IsInt()
+  @IsNotEmpty({ message: 'El numero de sector no puede estar vacio' })
+  sectorId: number;
 
   @IsArray()
   @ValidateNested({ each: true }) // Validar cada módulo
   @Type(() => ModulsDto) // Especificar el tipo de los módulos
   @IsOptional()
   modules?: ModulsDto[];
+
+  /* 
+  @IsObject()
+  @IsOptional()
+  promotionalPackages?: {
+    includedCourses: number[];
+    discountPercentage: number;
+  }[]; */
 }

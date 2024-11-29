@@ -9,23 +9,23 @@ import {
   JoinTable,
   ManyToMany,
 } from 'typeorm';
+import { Sector } from './sector.entity';
 
 @Entity()
 export class Course {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ type: 'varchar', length: 120 })
   courseName: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   courseDescription: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 30 })
   ownerId: string;
 
-
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 120 })
   ownerEmail: string;
 
   @Column({ default: true })
@@ -34,13 +34,13 @@ export class Course {
   @Column({ default: false })
   pendingApproval: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'date' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'date' })
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'date', nullable: true })
   deletedAt: Date;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
@@ -56,26 +56,38 @@ export class Course {
   })
   courseLevel: string;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 120, nullable: true })
   platform: string;
 
-  @Column({ length: 50, default: 'English' })
+  @Column({ type: 'varchar', length: 50, default: 'English' })
   language: string;
 
-  @Column({ type: 'json', nullable: true })
-  category: string;
-
-  @Column({ type: 'simple-array', nullable: true })
-  contentTypes: string[]; 
-
-  @Column({ type: 'simple-array', nullable: true })
-  tools: string[]; 
+  @Column({ type: 'varchar', length: 120, nullable: true })
+  pilar: string;
 
   @Column({ type: 'simple-array', nullable: true })
   hashtags: string[];
 
+  @Column({ type: 'simple-array', nullable: true })
+  contentTypes: string[];
+
+  @Column({ type: 'varchar', length: 240, nullable: true })
+  requirements: string;
+
+  @ManyToOne(() => Sector)
+  sector: Sector;
+
+  @Column({ type: 'simple-array', nullable: true })
+  tools: string[];
+  
+  @Column({ type: 'simple-array', nullable: true })
+  functionalities: string[];
+
+
+  
+  /*
   @Column({ type: 'json', nullable: true })
-  functionalities: Record<string, any>; 
+  functionalities: Record<string, any>;
 
   @Column({ type: 'boolean', default: false })
   isFree: boolean;
@@ -87,7 +99,7 @@ export class Course {
   promotionalPackages: {
     includedCourses: number[];
     discountPercentage: number;
-  }[]; 
+  }[];
 
   @Column({ type: 'text', nullable: true })
   whatYouWillLearn: string;
@@ -101,6 +113,6 @@ export class Course {
   @Column({ type: 'text', nullable: true })
   coverImageUrl: string;
 
-  @ManyToOne(()=> Course, (course) => course.id)
-  parentCourse: Course;
+  @ManyToOne(() => Course, (course) => course.id)
+  parentCourse: Course; */
 }
