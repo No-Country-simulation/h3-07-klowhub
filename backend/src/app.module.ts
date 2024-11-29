@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -15,6 +15,7 @@ import { AdminUsersModule } from './admin/admin-users/admin-users.module';
 import { GateWayModule } from './websockets/websocket.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { CoursesModule } from './courses/courses.module';
+import { typeOrmConfig } from './config/typeorm.config';
 
 @Module({
   imports: [
@@ -23,24 +24,9 @@ import { CoursesModule } from './courses/courses.module';
       isGlobal: true,
       expandVariables: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: 5432,
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
-      autoLoadEntities: true,
-      synchronize: true,
-      ssl: process.env.POSTGRES_SSL === 'true',
-      extra: {
-        ssl:
-          process.env.POSTGRES_SSL === 'true'
-            ? {
-                rejectUnauthorized: false,
-              }
-            : null,
-      },
+    TypeOrmModule.forRootAsync({
+      useFactory: typeOrmConfig,
+      inject: [ConfigService],
     }),
     MailerModule.forRoot({
       transport: {
