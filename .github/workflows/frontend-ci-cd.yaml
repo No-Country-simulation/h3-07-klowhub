@@ -24,6 +24,7 @@ jobs:
         run: |
           # Stop frontend service
           sudo systemctl stop klowhub-front.service || true
+          cd frontend/
           bun run build
           # Start frontend service
           sudo systemctl start klowhub-front.service || true
