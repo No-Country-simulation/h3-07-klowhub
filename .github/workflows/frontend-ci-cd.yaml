@@ -1,0 +1,38 @@
+name: Build and Deploy NextJS Frontend
+
+on:
+  push:
+    branches:
+      - dev-front-rafa  # or any branch you want to trigger the workflow on
+  pull_request:
+    branches:
+      - dev-front-rafa
+
+jobs:
+  build and deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Set Up git
+        uses: actions/checkout@v4
+
+      - name: Set Up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build
+        run: |
+          # Stop frontend service
+          sudo systemctl stop klowhub-front.service || true
+          bun run build
+          # Start frontend service
+          sudo systemctl start klowhub-front.service || true
+
+  # deploy:
+  #   runs-on: self-hosted
+  #   needs: build
+  #   steps:
+  #     - name: Deploy
+  #       run: |
+  #         cd ./dist
+  #         sudo cp -r * /var/www/html/
