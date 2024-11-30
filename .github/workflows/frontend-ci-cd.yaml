@@ -12,7 +12,7 @@ jobs:
   build-deploy:
     runs-on: self-hosted
     steps:
-      - name: Set Up git
+      - name: Set Up git and bun
         uses: actions/checkout@v4
 
       # - name: Set Up Node
@@ -20,12 +20,9 @@ jobs:
       #   with:
       #     node-version: 20
 
-      - name: Set Up Bun
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
-      - name: Build
         run: |
           # Stop frontend service
           sudo systemctl stop klowhub-front.service || true
