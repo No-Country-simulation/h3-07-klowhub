@@ -12,33 +12,31 @@ jobs:
   build-deploy:
     runs-on: self-hosted
     steps:
+      # Sep 1, checkout the respository
       - name: Set Up git
         uses: actions/checkout@v4
 
-      # - name: Set Up Node
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: 20
-
+      # Step 2, setup BUN
       - name: Set Up BUN
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
+      # Step 3: Install Dependencies
+      - name: Install Dependencies
+        run: |
+          bun run install
+
+      # Step 4: Build
       - name: Build
         run: |
-          # Stop frontend service
           sudo systemctl stop klowhub-front.service || true
+          # Stop frontend service
           cd frontend/
           bun run build
+
+      # Step 5: Deploy
+      - name: Deploy
+        run: |
           # Start frontend service
           sudo systemctl start klowhub-front.service || true
-
-  # deploy:
-  #   runs-on: self-hosted
-  #   needs: build
-  #   steps:
-  #     - name: Deploy
-  #       run: |
-  #         cd ./dist
-  #         sudo cp -r * /var/www/html/
