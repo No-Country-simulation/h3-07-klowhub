@@ -60,8 +60,15 @@ export class CoursesService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} course`;
+  async findOne(id: number) {
+    const course = await this.courseRepository.findOne({
+      where: { id },
+      relations: ['sector'],
+    });
+    if (!course) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+    return course;
   }
 
   async findOneSector(id: number) {
@@ -77,8 +84,18 @@ export class CoursesService {
       throw new HttpException(error.message, error.status);
     }
   }
-  update(id: number, updateCourseDto: UpdateCourseDto) {
-    return `This action updates a #${id} course`;
+  async update(id: number, updateCourseDto: UpdateCourseDto) {
+    const course = await this.findOne(id);
+
+    Object.assign(updateCourseDto);
+
+    if (updateCourseDto.sectorId) {
+      const sector = await this.findOneSector(updateCourseDto.sectorId);
+      if (sector) {
+        course.sector = sector;
+      }
+    }
+    return await this.courseRepository.save(course);
   }
 
   remove(id: number) {
