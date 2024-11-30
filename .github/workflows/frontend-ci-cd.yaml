@@ -24,6 +24,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
+      - name: Build
         run: |
           # Stop frontend service
           sudo systemctl stop klowhub-front.service || true
