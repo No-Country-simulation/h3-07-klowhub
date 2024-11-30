@@ -16,6 +16,7 @@ import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CreateSectorDto } from './dto/create-sector-dto';
+import { IdValidationPipe } from 'src/common/pipes/id-validation/id-validation/id-validation.pipe';
 
 @Controller('courses')
 export class CoursesController {
@@ -45,7 +46,10 @@ export class CoursesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
+  update(
+    @Param('id', IdValidationPipe) id: string,
+    @Body() updateCourseDto: UpdateCourseDto,
+  ) {
     return this.coursesService.update(+id, updateCourseDto);
   }
 
