@@ -9,7 +9,7 @@ on:
       - dev-front-rafa
 
 jobs:
-  build and deploy:
+  build-deploy:
     runs-on: self-hosted
     steps:
       - name: Set Up git
