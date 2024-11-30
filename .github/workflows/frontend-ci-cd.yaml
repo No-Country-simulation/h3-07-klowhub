@@ -26,6 +26,7 @@ jobs:
       # Step 3: Install Dependencies
       - name: Install Dependencies
         run: |
+          cd frontend/
           bun run install
 
       # Step 4: Build
@@ -33,7 +34,6 @@ jobs:
         run: |
           sudo systemctl stop klowhub-front.service || true
           # Stop frontend service
-          cd frontend/
           bun run build
 
       # Step 5: Deploy
