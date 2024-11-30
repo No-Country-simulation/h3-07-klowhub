@@ -29,7 +29,7 @@ jobs:
           pwd
           cd frontend/
           pwd
-          bun run install
+          bun install
 
       # Step 4: Build
       - name: Build
