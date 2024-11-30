@@ -28,12 +28,13 @@ jobs:
         run: |
           pwd
           cd frontend/
-          pwd
           bun install
 
       # Step 4: Build
       - name: Build
         run: |
+          pwd
+          cd frontend/
           sudo systemctl stop klowhub-front.service || true
           # Stop frontend service
           bun run build
