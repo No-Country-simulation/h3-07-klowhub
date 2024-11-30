@@ -20,6 +20,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: Set Up Bun
+      - uses: oven-sh/setup-bun@v2
+        with:
+        bun-version: latest
+
       - name: Build
         run: |
           # Stop frontend service
