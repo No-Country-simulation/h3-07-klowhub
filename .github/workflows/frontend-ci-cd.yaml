@@ -16,6 +16,7 @@ jobs:
       - name: Set Up git
         uses: actions/checkout@v4
 
+
       # Step 2, setup BUN
       - name: Set Up BUN
         uses: oven-sh/setup-bun@v2
