@@ -1,20 +1,18 @@
-// app/(protected)/(admin)/layout.tsx
-"use client";
-
-import { useSelector } from "react-redux";
+import ClientProvider from "@/app/ClientProvider";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { RootState } from "@/stores/store";
 
-export default function UserLayout({
+export default async function SellerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = useSelector((state: RootState) => state.auth);
+  const cookieStore = cookies();
+  const userRole = (await cookieStore).get("user_role")?.value;
 
-  if (user.user?.role !== "seller") {
-    redirect("/up-to-seller"); // or wherever you want to redirect non-admins
+  if (userRole !== "seller") {
+    redirect("/update-to-seller");
   }
 
-  return <>{children}</>;
+  return <ClientProvider>{children}</ClientProvider>;
 }

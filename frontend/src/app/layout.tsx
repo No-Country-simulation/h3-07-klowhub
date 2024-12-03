@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import ClientProvider from "./ClientProvider";
-import AuthCheck from "./(protected)/ClientProvider";
+import { NextUIProvider } from "@nextui-org/system";
 
 export default function RootLayout({
   children,
@@ -9,12 +8,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="text-white m-0 p-0 min-h-screen">
+    <html lang="es" suppressHydrationWarning>
       <head>
         <title>KlowHub</title>
       </head>
       <body className="bg-gradient-to-tr from-[#34395C] via-[#181941] to-[#1B1B1F]">
-        <ClientProvider>{children}</ClientProvider>
+        <NextUIProvider>{children}</NextUIProvider>
       </body>
     </html>
   );
