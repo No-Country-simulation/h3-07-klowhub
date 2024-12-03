@@ -7,6 +7,7 @@ import { Button } from "@nextui-org/button";
 import Image from "next/image";
 import React from "react";
 import { useSelector } from "react-redux";
+import Sobre from "./components/sobre";
 
 enum Role {
   admin = "Administrador",
@@ -69,6 +70,52 @@ const Page = () => {
             </div>
           </DashCard>
         </div>
+        {user?.role === "seller" && (
+          <div className="grid grid-cols-3 col-span-4 gap-6">
+            <DashCard classNames="text-sm font-semibold flex flex-col gap-4 select-none ">
+              <Sobre fill="white" width="20px" height="20px" />
+              <p>Inicio de Sesión y seguridad</p>
+              <p className="text-sm font-normal">
+                Actualiza tu contraseña y protege tu cuenta.
+              </p>
+            </DashCard>
+            <DashCard classNames="text-sm font-semibold flex flex-col gap-4 select-none ">
+              <Sobre fill="white" width="20px" height="20px" />
+              <p>Pagos y cobros</p>
+              <p className="font-normal">
+                Revisar pagos, cobros, cupones y tarjetas de regalo.
+              </p>
+            </DashCard>
+            <DashCard classNames="text-sm font-semibold flex flex-col gap-4 select-none ">
+              <Sobre fill="white" width="20px" height="20px" />
+              <p>Otros Servicios</p>
+              <p className="font-normal">Otros Servicios.</p>
+            </DashCard>
+            <DashCard classNames="text-sm font-semibold flex flex-col gap-4 select-none ">
+              <Sobre fill="white" width="20px" height="20px" />
+              <p>Información personal</p>
+              <p className="font-normal">
+                Proporcione datos personales y cómo podemos comunicarnos con
+                usted.
+              </p>
+            </DashCard>
+            <DashCard classNames="text-sm font-semibold flex flex-col gap-4 select-none ">
+              <Sobre fill="white" width="20px" height="20px" />
+              <p>Información de los servicios ofrecidos</p>
+              <p className="font-normal">
+                Proporcione datos de los servicios ofrecidos.
+              </p>
+            </DashCard>
+            <DashCard classNames="text-sm font-semibold flex flex-col gap-4 select-none ">
+              <Sobre fill="white" width="20px" height="20px" />
+              <p>Impuestos</p>
+              <p className="font-normal">
+                Gestionar la información del contribuyente y los documentos
+                fiscales.
+              </p>
+            </DashCard>
+          </div>
+        )}
         <DashCard classNames="col-span-4 ">
           <div className="flex w-full justify-between items-center h-full">
             <div className="flex flex-col justify-center h-full">

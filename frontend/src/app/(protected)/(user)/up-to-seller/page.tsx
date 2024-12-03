@@ -1,15 +1,15 @@
 import Image from "next/image";
 import SellerUpgradeForm from "./components/Form";
 
-const page = () => {
+const Page = () => {
   return (
     <div>
       <div className="relative w-full h-[200px] mb-12">
-        <Image fill src={"/assets/backgrounds/Hero.png"} alt="Hero" />
+        <Image priority fill src={"/assets/backgrounds/Hero.png"} alt="Hero" />
       </div>
       <SellerUpgradeForm />
     </div>
   );
 };
 
-export default page;
+export default Page;

@@ -20,7 +20,7 @@ const getRedirectPath = (role: string) => {
     case "admin":
       return "/dashboard";
     case "seller":
-      return "/seller";
+      return "/seller-dashboard";
     default:
       return "/user-dashboard";
   }
