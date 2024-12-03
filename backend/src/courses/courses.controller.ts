@@ -17,6 +17,7 @@ import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CreateSectorDto } from './dto/create-sector-dto';
 import { IdValidationPipe } from 'src/common/pipes/id-validation/id-validation/id-validation.pipe';
+import { CreateModulDto } from './dto/create-modul.dto';
 
 @Controller('courses')
 export class CoursesController {
@@ -28,6 +29,14 @@ export class CoursesController {
   create(@Body() createCourseDto: CreateCourseDto, @Req() request) {
     const user = request.user;
     return this.coursesService.create(user, createCourseDto);
+  }
+
+  @Post(':id/modules')
+  async addModules(
+    @Param('id', IdValidationPipe) courseId: number,
+    @Body() modules: CreateModulDto[],
+  ) {
+    return this.coursesService.addModules(courseId, modules);
   }
 
   @Get('sectors')

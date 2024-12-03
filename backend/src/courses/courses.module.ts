@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
 import { Sector } from './entities/sector.entity';
+import { Moduls } from './entities/moduls.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { Sector } from './entities/sector.entity';
         signOptions: { expiresIn: config.get<string | number>('JWT_EXPIRES') },
       }),
     }),
-    TypeOrmModule.forFeature([Course, Sector]),
+    TypeOrmModule.forFeature([Course, Sector, Moduls]),
   ],
   controllers: [CoursesController],
   providers: [CoursesService],

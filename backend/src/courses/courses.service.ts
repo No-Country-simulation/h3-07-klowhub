@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { UserResponseDto } from 'src/auth/dto/login-response-dto';
 import { Sector } from './entities/sector.entity';
 import { CreateSectorDto } from './dto/create-sector-dto';
+import { Moduls } from './entities/moduls.entity';
+import { CreateModulDto } from './dto/create-modul.dto';
 
 @Injectable()
 export class CoursesService {
@@ -15,6 +17,8 @@ export class CoursesService {
     private courseRepository: Repository<Course>,
     @InjectRepository(Sector)
     private readonly sectorRepository: Repository<Sector>,
+    @InjectRepository(Moduls)
+    private modulsRepository: Repository<Moduls>,
   ) {}
 
   async create(userId: UserResponseDto, createCourseDto: CreateCourseDto) {
@@ -28,29 +32,37 @@ export class CoursesService {
         ownerId: userId._id,
         ownerEmail: userId.email,
       });
-      /* const newCourse = this.courseRepository.create({
-        courseName,
-        ownerId: userId._id,
-        ownerEmail: userId.email,
-        isActivated: true,
-        pendingApproval: true,
-        courseType: 'course',
-        courseLevel: 'beginner',
-        language: 'English',
-      });
-      if (!newCourse) {
-        return { message: 'Error creating course' };
-      } */
-      // return await this.courseRepository.save(newCourse);
     } catch (error) {
       console.log(error);
     }
   }
 
+  async addModules(
+    courseId: number,
+    modules: CreateModulDto[],
+  ): Promise<Moduls[]> {
+    const course = await this.courseRepository.findOne({
+      where: { id: courseId },
+      relations: ['moduls'],
+    });
+
+    if (!course) {
+      throw new NotFoundException('Course not found');
+    }
+
+    const newModules = modules.map((modul) =>
+      this.modulsRepository.create({ ...modul, courses: course }),
+    );
+
+    await this.modulsRepository.save(newModules);
+
+    return newModules;
+  }
+
   async findAll() {
     try {
       return await this.courseRepository.find({
-        relations: ['sector'],
+        relations: ['sector', 'moduls'],
         order: {
           id: 'DESC',
         },
