@@ -1,20 +1,24 @@
 // app/(protected)/(admin)/layout.tsx
-"use client";
-
-import { useSelector } from "react-redux";
+import Breadcrumb from "@/components/layout/components/Breadcrumb";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { RootState } from "@/stores/store";
 
-export default function UserLayout({
+export default async function UserLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = useSelector((state: RootState) => state.auth);
+  const cookieStore = cookies();
+  const userRole = (await cookieStore).get("userRole")?.value;
 
-  if (user.user?.role !== "user") {
-    redirect("/"); // or wherever you want to redirect non-admins
+  if (userRole !== "user") {
+    redirect("/unauthorized");
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <Breadcrumb />
+      {children}
+    </>
+  );
 }

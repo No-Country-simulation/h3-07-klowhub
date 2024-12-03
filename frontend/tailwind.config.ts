@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import { nextui } from "@nextui-org/react"
+import { nextui } from "@nextui-org/react";
 
 export default {
   content: [
@@ -8,6 +8,7 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
+  mode: "jit",
   theme: {
     extend: {
       colors: {

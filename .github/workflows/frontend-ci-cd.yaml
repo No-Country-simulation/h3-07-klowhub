@@ -1,0 +1,46 @@
+name: Build and Deploy NextJS Frontend
+
+on:
+  push:
+    branches:
+      - dev-front-rafa  # or any branch you want to trigger the workflow on
+  pull_request:
+    branches:
+      - dev-front-rafa
+
+jobs:
+  build-deploy:
+    runs-on: self-hosted
+    steps:
+      # Sep 1, checkout the respository
+      - name: Set Up git
+        uses: actions/checkout@v4
+
+
+      # Step 2, setup BUN
+      - name: Set Up BUN
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # Step 3: Install Dependencies
+      - name: Install Dependencies
+        run: |
+          pwd
+          cd frontend/
+          bun install
+
+      # Step 4: Build
+      - name: Build
+        run: |
+          pwd
+          cd frontend/
+          sudo systemctl stop klowhub-front.service || true
+          # Stop frontend service
+          bun run build
+
+      # Step 5: Deploy
+      - name: Deploy
+        run: |
+          # Start frontend service
+          sudo systemctl start klowhub-front.service || true

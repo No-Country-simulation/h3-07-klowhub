@@ -10,6 +10,7 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { Sector } from './sector.entity';
+import { Moduls } from './moduls.entity';
 
 @Entity()
 export class Course {
@@ -77,6 +78,9 @@ export class Course {
   @ManyToOne(() => Sector)
   sector: Sector;
 
+  @OneToMany(() => Moduls, (moduls) => moduls.courses)
+  moduls: Moduls;
+
   @Column({ type: 'simple-array', nullable: true })
   tools: string[];
 
@@ -94,7 +98,7 @@ export class Course {
 
   @Column({ type: 'text', nullable: true })
   coverImageUrl: string;
-  
+
   /*
   @Column({ type: 'json', nullable: true })
   functionalities: Record<string, any>;
