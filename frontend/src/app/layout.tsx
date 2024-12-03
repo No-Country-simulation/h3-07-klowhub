@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientProvider from "./ClientProvider";
+import AuthCheck from "./(protected)/ClientProvider";
 
 export default function RootLayout({
   children,
