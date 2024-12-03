@@ -1,27 +1,27 @@
 import DashCard from "@/components/cards/DashCard";
-import SellerMenuButtons from "@/components/sellerMenu/SellerMenuButtons";
+import SelectorButtons from "@/components/dashboardSelector/SelectorButtons";
 import React from "react";
 
 const UserPage = () => {
   return (
     <div>
-      <div id="menu" className="flex justify-between w-full">
-        <SellerMenuButtons
+      <div id="menu" className="grid grid-cols-4 gap-16 w-full h-16">
+        <SelectorButtons
           background="/assets/backgrounds/Button1.png"
           title="Mis cursos"
           url="/courses"
         />
-        <SellerMenuButtons
+        <SelectorButtons
           background="/assets/backgrounds/Button2.png"
           title="Explorar proyectos"
           url="/proyects"
         />
-        <SellerMenuButtons
+        <SelectorButtons
           background="/assets/backgrounds/Button3.png"
           title="Mis aplicaciones"
           url="/apps"
         />
-        <SellerMenuButtons
+        <SelectorButtons
           background="/assets/backgrounds/Button4.png"
           title="Consultas técnicas"
           url="/tecnicalIssues"

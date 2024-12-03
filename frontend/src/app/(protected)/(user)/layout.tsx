@@ -13,7 +13,7 @@ export default function UserLayout({
   const user = useSelector((state: RootState) => state.auth);
 
   if (user.user?.role !== "user") {
-    redirect("/"); // or wherever you want to redirect non-admins
+    redirect("/user-dashboard"); // or wherever you want to redirect non-admins
   }
 
   return <>{children}</>;
