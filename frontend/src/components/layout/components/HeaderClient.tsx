@@ -9,7 +9,10 @@ import { useRouter } from "next/navigation";
 
 export default function HeaderClient() {
   const { user, logout } = useAuth();
-  const [isCreatorMode, setIsCreatorMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isCreatorMode, setIsCreatorMode] = useState(() =>
+    user?.role === "seller" ? true : false
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const menuAdministrador = [
@@ -39,6 +42,9 @@ export default function HeaderClient() {
   const handleRedirect = () => {
     router.push("/profile");
   };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const getCurrentMenu = () => {
     switch (user?.role) {
       case "admin":
@@ -67,9 +73,6 @@ export default function HeaderClient() {
       return;
     }
   };
-  useEffect(() => {
-    if (user?.role === "seller") setIsCreatorMode(true);
-  }, [user?.role]);
 
   const handleLogout = () => {
     logout();
@@ -118,9 +121,20 @@ export default function HeaderClient() {
           className="text-xs"
         />
         <NavLink url="#" text="Home" />
-        {getCurrentMenu().map((menu) => (
-          <NavLink key={menu.text} url={menu.url} text={menu.text} />
-        ))}
+        {!mounted ? (
+          <div className="flex gap-2 xl:gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="h-6 w-24 bg-gray-200 animate-pulse rounded"
+              />
+            ))}
+          </div>
+        ) : (
+          getCurrentMenu().map((menu) => (
+            <NavLink key={menu.text} url={menu.url} text={menu.text} />
+          ))
+        )}
       </nav>
       <div className="flex gap-8 pr-10 xl:text-base text-sm items-center z-10">
         <section className="flex gap-4">
@@ -195,7 +209,9 @@ export default function HeaderClient() {
         </section>
         {user?.role !== "admin" && (
           <section className="flex gap-4 flex-grow items-center">
-            <p>{user?.role === "seller" ? "Creador" : "Explorador"}</p>
+            {mounted && (
+              <p>{user?.role === "seller" ? "Creador" : "Explorador"}</p>
+            )}
             <div className="flex items-center">
               <input
                 className="react-switch-checkbox"
