@@ -1,0 +1,7 @@
+info: main.c:395: 1.2.0
+ err: jpg.c:45: /home/mike/.cache/imagemagick-current-wallpaper/wallpaper-final.png: Not a JPEG file: starts with 0x89 0x50
+libpng error: Read Error
+ err: png.c:49: /home/mike/.cache/imagemagick-current-wallpaper/wallpaper-final.png: libpng error
+ err: webp.c:46: /home/mike/.cache/imagemagick-current-wallpaper/wallpaper-final.png: not a WebP file
+ err: svg.c:26: /home/mike/.cache/imagemagick-current-wallpaper/wallpaper-final.png: width and/or heigth is zero, not a SVG?
+error: /home/mike/.cache/imagemagick-current-wallpaper/wallpaper-final.png: failed to load
