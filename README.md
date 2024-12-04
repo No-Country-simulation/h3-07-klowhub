@@ -4,7 +4,7 @@ _Redes Sociales - Educación - Creación de Contenido_
 ## Objetivos
 > **Aprende, Comparte, Conecta y Monetiza**
 
-KlowHub es una plataforma SaaS diseñada para ser el núcleo de la comunidad global de desarrolladores y usuarios en el ecosistema No Code y Low Code. Con un enfoque en gestión de contenido y productos digitales de plataformas líderes como AppSheet y Power Apps, nuestra misión es ofrecer un entorno que facilite el aprendizaje continuo, fomente la colaboración entre profesionales y permita la monetización del conocimiento técnico. A continuación, se detallan las principales características que definirán la experiencia en KlowHub.
+KlowHub es una plataforma SaaS diseñada para ser el núcleo de la comunidad global de desarrolladores y usuarios en el ecosistema No Code y Low Code. Con un enfoque en gestión de contenido y productos digitales de plataformas líderes como AppSheet y Power Apps, nuestra misión es ofrecer un entorno que facilite el aprendizaje continuo, fomente la colaboración entre profesionales y permita la monetización del conocimiento técnico.
 
 ## Colaboradores
 ||Nombre|Rol|Redes|
