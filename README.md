@@ -7,7 +7,7 @@ _Redes Sociales - Educación - Creación de Contenido_
 KlowHub es una plataforma SaaS diseñada para ser el núcleo de la comunidad global de desarrolladores y usuarios en el ecosistema No Code y Low Code. Con un enfoque en gestión de contenido y productos digitales de plataformas líderes como AppSheet y Power Apps, nuestra misión es ofrecer un entorno que facilite el aprendizaje continuo, fomente la colaboración entre profesionales y permita la monetización del conocimiento técnico.
 
 ## Colaboradores
-||Nombre|Rol|Redes|
+|Perfil|Nombre|Rol|Redes|
 |---------------------------|-------------------------------|------------|------------|
 |<img src="https://avatars.githubusercontent.com/u/44025206?v=4" alt="Description" width="100" height="100">|Rafael Ricardo Strongoli|FrontEnd| <div>[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rafaric)</div><div> [![Linkedin](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rafael-strongoli/) </div>|
 |<img src="https://avatars.githubusercontent.com/u/44025206?v=4" alt="Description" width="100" height="100">|Yazuline Viveros Bedoya|BackEnd|<div>[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Yazuline)</div><div> [![Linkedin](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rafael-strongoli/) </div>|
