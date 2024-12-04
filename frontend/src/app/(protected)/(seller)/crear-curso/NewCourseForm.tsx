@@ -6,7 +6,22 @@ import { Button } from "@nextui-org/button";
 import Image from "next/image";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import UploadFileInput from "../../(user)/up-to-seller/components/UploadFileInput";
+import UploadPDFFileInput from "./UploadPDFInput";
+import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import ModulesAndLessons from "./ModulesAndLessons";
 
+export interface Lesson {
+  title: string;
+  description: string;
+  videoUrl: File | null;
+  pdfUrl: File[] | null;
+}
+export interface Module {
+  title: string;
+  description: string;
+  lessons: Lesson[];
+}
 export interface Inputs {
   courseName: string;
   period: boolean;
@@ -37,13 +52,72 @@ export enum steps {
   "promociones",
 }
 const NewCourseForm = () => {
-  const [step, setStep] = useState<steps>(steps.detalles);
-  const { register, handleSubmit } = useForm<Inputs>({
+  const [step, setStep] = useState<steps>(steps.modulosyLecciones);
+  const [editing, setEditing] = useState(true);
+  const [moduleTitle, setModuleTitle] = useState<string>("");
+  const [moduleDescription, setModuleDescription] = useState<string>("");
+  const [lessonTitle, setLessonTitle] = useState<string>("");
+  const [lessonDescription, setLessonDescription] = useState("");
+  const [videoUrl, setVideoUrl] = useState<File>();
+  const [pdfUrl, setPdfUrl] = useState<File[]>([]);
+  const [modules, setModules] = useState<Module[]>([]);
+  const [selectedModule, setSelectedModule] = useState<Module>({} as Module);
+  const [addingNewLesson, setAddingNewLesson] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>({
     defaultValues: {},
   });
+
   const onSubmit = (data: Inputs) => {
     console.log(data);
   };
+  const handleSaveModule = () => {
+    if (!addingNewLesson) {
+      const newModule: Module = {
+        title: moduleTitle,
+        description: moduleDescription,
+        lessons: [
+          {
+            title: lessonTitle,
+            description: lessonDescription,
+            videoUrl: videoUrl ? videoUrl : null,
+            pdfUrl: pdfUrl ? pdfUrl : null,
+          },
+        ],
+      };
+      setModules([...modules, newModule]);
+      setSelectedModule(newModule);
+      setEditing(false);
+    } else {
+      const moduleToModify = modules.find(
+        (module) => module.title === selectedModule.title
+      );
+      if (moduleToModify) {
+        const newLesson: Lesson = {
+          title: lessonTitle,
+          description: lessonDescription,
+          videoUrl: videoUrl ? videoUrl : null,
+          pdfUrl: pdfUrl ? pdfUrl : null,
+        };
+        moduleToModify.lessons.push(newLesson);
+        setModules(
+          modules.map((m) =>
+            m.title === moduleToModify.title ? moduleToModify : m
+          )
+        );
+        console.log("hola");
+
+        setEditing(false);
+        setAddingNewLesson(false);
+      }
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="pb-5">
       <FormNavigator step={step} setStep={setStep} />
@@ -239,6 +313,7 @@ const NewCourseForm = () => {
                   id="whatYouWillLearn"
                   className="w-full h-40 rounded-lg my-6"
                 />
+                {errors.whatYouWillLearn?.message}
               </div>
               <div>
                 <label htmlFor="whatYouWillLearn">Requisitos previos</label>
@@ -263,10 +338,47 @@ const NewCourseForm = () => {
                   className="w-full h-40 rounded-lg my-6"
                 />
               </div>
+              <div className="flex flex-col gap-4">
+                <label htmlFor="coverImageUrl" className="py-6">
+                  Subí una imagen que represente tu curso de manera atractiva
+                  para utilizarla de portada
+                </label>
+                <UploadFileInput
+                  fieldName="coverImageUrl"
+                  detalleImagen="portada de tu video"
+                  setValue={setValue}
+                />
+              </div>
             </section>
           )
         )}
-
+        {step === steps.modulosyLecciones && (
+          <section>
+            <ModulesAndLessons
+              addingNewLesson={addingNewLesson}
+              setAddingNewLesson={setAddingNewLesson}
+              modules={modules}
+              handleSaveModule={handleSaveModule}
+              setModuleTitle={setModuleTitle}
+              setValue={setValue}
+              editing={editing}
+              moduleTitle={moduleTitle}
+              moduleDescription={moduleDescription}
+              lessonTitle={lessonTitle}
+              lessonDescription={lessonDescription}
+              lessonPdfUrl={pdfUrl}
+              lessonVideoUrl={videoUrl}
+              selectedModule={selectedModule}
+              setEditing={setEditing}
+              setSelectedModule={setSelectedModule}
+              setLessonTitle={setLessonTitle}
+              setLessonVideoUrl={setVideoUrl}
+              setLessonPdfUrl={setPdfUrl}
+              setLessonDescription={setLessonDescription}
+              setModuleDescription={setModuleDescription}
+            />
+          </section>
+        )}
         <section>
           <AdminCard>
             <div className="relative col-span-1 max-h-[250px] w-full">
@@ -294,7 +406,19 @@ const NewCourseForm = () => {
         <Button
           variant="solid"
           className="bg-primario500 text-white px-16 rounded-lg hover:bg-primario300"
-          onClick={() => setStep(steps.detalles)}
+          onClick={() => {
+            switch (step) {
+              case steps.general:
+                setStep(steps.detalles);
+                break;
+              case steps.detalles:
+                setStep(steps.modulosyLecciones);
+                break;
+              case steps.modulosyLecciones:
+                setStep(steps.promociones);
+                break;
+            }
+          }}
         >
           Continuar
         </Button>
