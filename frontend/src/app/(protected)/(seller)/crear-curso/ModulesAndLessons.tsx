@@ -5,13 +5,11 @@ import UploadPDFFileInput from "./UploadPDFInput";
 import { Button } from "@nextui-org/button";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { UseFormSetValue } from "react-hook-form";
-import { useState } from "react";
 
 interface ModulesAndLessonsProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setValue: UseFormSetValue<any>;
   editing: boolean;
-  moduleTitle: string;
-  moduleDescription: string;
   setEditing: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedModule: React.Dispatch<React.SetStateAction<Module>>;
   selectedModule: Module;
@@ -37,19 +35,12 @@ const ModulesAndLessons = ({
   setAddingNewLesson,
   setValue,
   editing,
-  moduleTitle,
-  moduleDescription,
   selectedModule,
-  lessonDescription,
-  lessonPdfUrl,
-  lessonVideoUrl,
-  lessonTitle,
   setEditing,
   setModuleTitle,
   setSelectedModule,
   modules,
   setLessonTitle,
-  setLessonPdfUrl,
   setLessonDescription,
   setLessonVideoUrl,
   setModuleDescription,

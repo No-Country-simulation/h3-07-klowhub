@@ -7,8 +7,6 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import UploadFileInput from "../../(user)/up-to-seller/components/UploadFileInput";
-import UploadPDFFileInput from "./UploadPDFInput";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import ModulesAndLessons from "./ModulesAndLessons";
 
 export interface Lesson {
@@ -67,7 +65,6 @@ const NewCourseForm = () => {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {},
@@ -362,8 +359,6 @@ const NewCourseForm = () => {
               setModuleTitle={setModuleTitle}
               setValue={setValue}
               editing={editing}
-              moduleTitle={moduleTitle}
-              moduleDescription={moduleDescription}
               lessonTitle={lessonTitle}
               lessonDescription={lessonDescription}
               lessonPdfUrl={pdfUrl}
