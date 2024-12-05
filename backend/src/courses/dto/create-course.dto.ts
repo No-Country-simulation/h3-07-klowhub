@@ -86,10 +86,12 @@ export class CreateCourseDto {
   benefits: string[];
 
   @IsString()
+  @IsOptional()
   coverImageUrl: string;
+
   @IsArray()
-  @ValidateNested({ each: true }) // Validar cada módulo
-  @Type(() => ModulsDto) // Especificar el tipo de los módulos
+  @ValidateNested({ each: true })
+  @Type(() => ModulsDto)
   @IsOptional()
   modules?: ModulsDto[];
 

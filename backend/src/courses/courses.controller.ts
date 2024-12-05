@@ -18,6 +18,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CreateSectorDto } from './dto/create-sector-dto';
 import { IdValidationPipe } from 'src/common/pipes/id-validation/id-validation/id-validation.pipe';
 import { CreateModulDto } from './dto/create-modul.dto';
+import { CreateLessonDto } from './dto/create-lesson.dto';
 
 @Controller('courses')
 export class CoursesController {
@@ -39,9 +40,35 @@ export class CoursesController {
     return this.coursesService.addModules(courseId, modules);
   }
 
+  @Get('modules')
+  findAllModules() {
+    return this.coursesService.findAllModules();
+  }
+
+  @Get('modules/:id')
+  findOneModule(@Param('id', IdValidationPipe) id: string) {
+    return this.coursesService.findOneModule(+id);
+  }
+  @Post('modules/:id/lessons')
+  async addLessons(
+    @Param('id', IdValidationPipe) modulId: number,
+    @Body() lessons: CreateLessonDto,
+  ) {
+    return this.coursesService.addLessons(modulId, lessons);
+  }
   @Get('sectors')
   findAllSectors() {
     return this.coursesService.findAllSectors();
+  }
+
+  @Get('lessons')
+  findAllLessons() {
+    return this.coursesService.findAllLessons();
+  }
+
+  @Get('lessons/:id')
+  findOneLesson(@Param('id', IdValidationPipe) id: string) {
+    return this.coursesService.findOneLesson(+id);
   }
 
   @Get()
