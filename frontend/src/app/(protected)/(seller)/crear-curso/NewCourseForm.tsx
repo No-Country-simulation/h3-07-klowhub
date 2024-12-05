@@ -4,10 +4,11 @@ import DashCard from "@/components/cards/DashCard";
 import FormNavigator from "@/components/form/FormNavigator";
 import { Button } from "@nextui-org/button";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import UploadFileInput from "../../(user)/up-to-seller/components/UploadFileInput";
 import ModulesAndLessons from "./ModulesAndLessons";
+import Promotions from "./Promotions";
 
 export interface Lesson {
   title: string;
@@ -20,16 +21,18 @@ export interface Module {
   description: string;
   lessons: Lesson[];
 }
+
 export interface Inputs {
   courseName: string;
   period: boolean;
   courseType: string;
   courseDescription: string;
   coursePrice: string;
-  courseLevel: string;
+  courseLevel: boolean;
   platform: string;
   language: string;
   pilar: string;
+  course: Module[];
   hashtags: string[];
   contentTypes: string;
   requirements: string;
@@ -42,6 +45,8 @@ export interface Inputs {
     id: number;
     name: string;
   };
+  promotion: boolean;
+  discount: string;
 }
 export enum steps {
   "general",
@@ -50,7 +55,7 @@ export enum steps {
   "promociones",
 }
 const NewCourseForm = () => {
-  const [step, setStep] = useState<steps>(steps.modulosyLecciones);
+  const [step, setStep] = useState<steps>(steps.general);
   const [editing, setEditing] = useState(true);
   const [moduleTitle, setModuleTitle] = useState<string>("");
   const [moduleDescription, setModuleDescription] = useState<string>("");
@@ -61,17 +66,30 @@ const NewCourseForm = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedModule, setSelectedModule] = useState<Module>({} as Module);
   const [addingNewLesson, setAddingNewLesson] = useState(false);
+  const [submitButton, setSubmitButton] = useState<
+    "button" | "submit" | "reset" | undefined
+  >("button");
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {},
   });
+  useEffect(() => {
+    if (step === steps.promociones) {
+      setSubmitButton("submit");
+    } else {
+      setSubmitButton("button");
+    }
+    return () => {};
+  }, [step]);
 
   const onSubmit = (data: Inputs) => {
-    console.log(data);
+    const newData = { ...data, course: modules };
+    console.log(newData);
   };
   const handleSaveModule = () => {
     if (!addingNewLesson) {
@@ -89,6 +107,7 @@ const NewCourseForm = () => {
       };
       setModules([...modules, newModule]);
       setSelectedModule(newModule);
+      setValue("course", modules);
       setEditing(false);
     } else {
       const moduleToModify = modules.find(
@@ -108,7 +127,7 @@ const NewCourseForm = () => {
           )
         );
         console.log("hola");
-
+        setValue("course", modules);
         setEditing(false);
         setAddingNewLesson(false);
       }
@@ -125,7 +144,7 @@ const NewCourseForm = () => {
             <div className="flex flex-col gap-4">
               <label htmlFor="courseName">Título del curso/lección</label>
               <input
-                {...register}
+                {...register("courseName")}
                 name="courseName"
                 id="title"
                 type="text"
@@ -150,15 +169,22 @@ const NewCourseForm = () => {
               <div>
                 <p>¿Qué tipo de contenido estás ofreciendo?</p>
                 <div className="flex gap-4 my-4">
-                  <input {...register} type="radio" name="period" id="free" />
+                  <input
+                    {...register("coursePrice")}
+                    type="radio"
+                    name="coursePrice"
+                    id="free"
+                    value="0.00"
+                  />
                   <label htmlFor="free">Contenido gratuito</label>
                 </div>
                 <div className="flex gap-4 my-4">
                   <input
-                    {...register}
+                    {...register("coursePrice")}
                     type="radio"
-                    name="period"
+                    name="coursePrice"
                     id="premium"
+                    value="10.00"
                   />
                   <label htmlFor="premium">Contenido pago</label>
                 </div>
@@ -167,19 +193,21 @@ const NewCourseForm = () => {
                 <p>Selecciona si vas a crear un curso o una lección</p>
                 <div className="flex gap-4 my-4">
                   <input
-                    {...register}
+                    {...register("courseType")}
                     type="radio"
                     name="courseType"
                     id="course"
+                    value="course"
                   />
                   <label htmlFor="course">Curso</label>
                 </div>
                 <div className="flex gap-4 my-4">
                   <input
-                    {...register}
+                    {...register("courseType")}
                     type="radio"
                     name="courseType"
                     id="lesson"
+                    value="lesson"
                   />
                   <label htmlFor="lesson">Lección</label>
                 </div>
@@ -187,9 +215,8 @@ const NewCourseForm = () => {
             </div>
             <div className="my-10">
               <p>Contá de qué trata, en no más de 3 líneas</p>
-              <input
-                {...register}
-                type="text-area"
+              <textarea
+                {...register("courseDescription")}
                 name="courseDescription"
                 className="rounded-lg my-2 h-40 w-full"
                 id="courseDescription"
@@ -200,19 +227,21 @@ const NewCourseForm = () => {
                 <p>Nivel de competencia</p>
                 <div className="flex gap-4">
                   <input
-                    {...register}
+                    {...register("courseLevel")}
                     type="radio"
                     name="courseLevel"
                     id="basic"
+                    value="beginner"
                   />
                   <label htmlFor="courseLevel">Básico</label>
                 </div>
                 <div className="flex gap-4">
                   <input
-                    {...register}
+                    {...register("courseLevel")}
                     type="radio"
                     name="courseLevel"
                     id="Intermedio"
+                    value="intermediate"
                   />
                   <label htmlFor="courseLevel">Intermedio</label>
                 </div>
@@ -220,11 +249,23 @@ const NewCourseForm = () => {
               <div>
                 <p>Plataforma</p>
                 <div className="flex gap-4">
-                  <input type="radio" name="platform" id="AppSheet" />
+                  <input
+                    {...register("platform")}
+                    type="radio"
+                    name="platform"
+                    id="AppSheet"
+                    value="AppSheet"
+                  />
                   <label htmlFor="courseLevel">AppSheet</label>
                 </div>
                 <div className="flex gap-4">
-                  <input type="radio" name="platform" id="PowerApps" />
+                  <input
+                    {...register("platform")}
+                    type="radio"
+                    name="platform"
+                    id="PowerApps"
+                    value="PowerApps"
+                  />
                   <label htmlFor="courseLevel">PowerApps</label>
                 </div>
               </div>
@@ -233,7 +274,7 @@ const NewCourseForm = () => {
                   <label>Elige el idioma del curso</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("language")}
                     type="text"
                     name="language"
                     id="language"
@@ -242,54 +283,69 @@ const NewCourseForm = () => {
                 <div>
                   <label>Elige el sector al que deseas dirigir el curso</label>
                   <select
-                    {...register}
+                    {...register("sector")}
                     name="sector"
                     className="w-full rounded-lg h-11 my-6"
-                    id="language"
+                    id="sector"
                   >
-                    <option value="1">Tecnologia</option>
-                    <option value="2">Programación</option>
-                    <option value="3">Inteligencia Artificial</option>
+                    <option
+                      value={JSON.stringify({ id: 1, name: "Tecnología" })}
+                    >
+                      Tecnología
+                    </option>
+                    <option
+                      value={JSON.stringify({ id: 2, name: "Programación" })}
+                    >
+                      Programación
+                    </option>
+                    <option
+                      value={JSON.stringify({
+                        id: 3,
+                        name: "Inteligencia Artificial",
+                      })}
+                    >
+                      Inteligencia Artificial
+                    </option>
                   </select>
                 </div>
                 <div>
                   <label>Define el contenido del curso</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("pilar")}
                     type="text"
-                    name="contentTypes"
-                    id="language"
+                    name="pilar"
+                    id="pilar"
                   />
                 </div>
                 <div>
                   <label>Herramientas y plataformas</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("tools")}
                     type="text"
                     name="tools"
-                    id="language"
+                    id="tools"
                   />
                 </div>
                 <div>
                   <label>Funcionalidades</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("functionalities")}
                     type="text"
                     name="functionalities"
-                    id="language"
+                    id="functionalities"
                   />
                 </div>
                 <div>
                   <label>Agrega etiquetas relacionadas</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("hashtags")}
                     type="text"
                     name="hashtags"
-                    id="language"
+                    id="hastags"
                   />
                 </div>
               </div>
@@ -303,9 +359,8 @@ const NewCourseForm = () => {
                   Decinos qué van a aprender tus estudiantes al finalizar el
                   curso.
                 </label>
-                <input
-                  {...register}
-                  type="text-area"
+                <textarea
+                  {...register("whatYouWillLearn")}
                   name="whatYouWillLearn"
                   id="whatYouWillLearn"
                   className="w-full h-40 rounded-lg my-6"
@@ -313,23 +368,21 @@ const NewCourseForm = () => {
                 {errors.whatYouWillLearn?.message}
               </div>
               <div>
-                <label htmlFor="whatYouWillLearn">Requisitos previos</label>
-                <input
-                  {...register}
-                  type="text-area"
+                <label htmlFor="requirements">Requisitos previos</label>
+                <textarea
+                  {...register("requirements")}
                   name="requirements"
                   id="requirements"
                   className="w-full h-40 rounded-lg my-6"
                 />
               </div>
               <div>
-                <label htmlFor="whatYouWillLearn">
+                <label htmlFor="benefits">
                   Hacé una descripción detallada del contenido y de los
                   beneficios que ofrece.
                 </label>
-                <input
-                  {...register}
-                  type="text-area"
+                <textarea
+                  {...register("benefits")}
                   name="benefits"
                   id="benefits"
                   className="w-full h-40 rounded-lg my-6"
@@ -374,6 +427,11 @@ const NewCourseForm = () => {
             />
           </section>
         )}
+        {step === steps.promociones && (
+          <section>
+            <Promotions combine={watch("promotion")} setValue={setValue} />
+          </section>
+        )}
         <section>
           <AdminCard>
             <div className="relative col-span-1 max-h-[250px] w-full">
@@ -414,6 +472,7 @@ const NewCourseForm = () => {
                 break;
             }
           }}
+          type={submitButton}
         >
           Continuar
         </Button>

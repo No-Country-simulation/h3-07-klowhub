@@ -61,9 +61,8 @@ const ModulesAndLessons = ({
           </div>
           <div className="flex flex-col gap-6 mb-12">
             <label>Descripción</label>
-            <input
+            <textarea
               onChange={(e) => setModuleDescription(e.target.value)}
-              type="text-area"
               name="moduleDescription"
               className="h-40 rounded-lg"
             />
@@ -81,9 +80,8 @@ const ModulesAndLessons = ({
               </div>
               <div className="flex flex-col gap-6 mb-12">
                 <label>Descripción</label>
-                <input
+                <textarea
                   onChange={(e) => setLessonDescription(e.target.value)}
-                  type="text-area"
                   name="lessonDescription"
                   className="h-40 rounded-lg"
                 />
