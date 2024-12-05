@@ -7,8 +7,9 @@ import { Repository } from 'typeorm';
 import { UserResponseDto } from 'src/auth/dto/login-response-dto';
 import { Sector } from './entities/sector.entity';
 import { CreateSectorDto } from './dto/create-sector-dto';
-import { Moduls } from './entities/moduls.entity';
+import { Lesson, Moduls } from './entities/moduls.entity';
 import { CreateModulDto } from './dto/create-modul.dto';
+import { CreateLessonDto } from './dto/create-lesson.dto';
 
 @Injectable()
 export class CoursesService {
@@ -19,6 +20,8 @@ export class CoursesService {
     private readonly sectorRepository: Repository<Sector>,
     @InjectRepository(Moduls)
     private modulsRepository: Repository<Moduls>,
+    @InjectRepository(Lesson)
+    private lessonRepository: Repository<Lesson>,
   ) {}
 
   async create(userId: UserResponseDto, createCourseDto: CreateCourseDto) {
@@ -57,6 +60,26 @@ export class CoursesService {
     await this.modulsRepository.save(newModules);
 
     return newModules;
+  }
+
+  async addLessons(modulId: number, lesson: CreateLessonDto): Promise<Lesson> {
+    const modul = await this.modulsRepository.findOne({
+      where: { id: modulId },
+      relations: ['Lesson'],
+    });
+
+    if (!modul) {
+      throw new NotFoundException('Modul not found');
+    }
+
+    const newLesson = this.lessonRepository.create({
+      ...lesson,
+      modul,
+    });
+
+    await this.lessonRepository.save(newLesson);
+
+    return newLesson;
   }
 
   async findAll() {
@@ -128,6 +151,43 @@ export class CoursesService {
   async findAllSectors() {
     try {
       return await this.sectorRepository.find();
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async findAllLessons() {
+    try {
+      return await this.lessonRepository.find();
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async findOneLesson(id: number) {
+    try {
+      return await this.lessonRepository.findOneBy({ id: id });
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async findAllModules() {
+    try {
+      return await this.modulsRepository.find({ relations: ['Lesson'] });
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async findOneModule(id: number) {
+    try {
+      return await this.modulsRepository.findOne({
+        where: { id },
+        relations: {
+          Lesson: true,
+        },
+      });
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
