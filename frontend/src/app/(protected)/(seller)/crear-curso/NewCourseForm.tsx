@@ -9,6 +9,15 @@ import { useForm } from "react-hook-form";
 import UploadFileInput from "../../(user)/up-to-seller/components/UploadFileInput";
 import ModulesAndLessons from "./ModulesAndLessons";
 import Promotions from "./Promotions";
+import { newCourse } from "@/utils/courses/courses";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 
 export interface Lesson {
   title: string;
@@ -27,24 +36,21 @@ export interface Inputs {
   period: boolean;
   courseType: string;
   courseDescription: string;
-  coursePrice: string;
-  courseLevel: boolean;
+  coursePrice: number;
+  courseLevel: string;
   platform: string;
   language: string;
   pilar: string;
   course: Module[];
-  hashtags: string[];
+  hashtags: string;
   contentTypes: string;
   requirements: string;
-  tools: string[];
-  functionalities: string[];
+  tools: string;
+  functionalities: string;
   whatYouWillLearn: string;
-  benefits: string[];
+  benefits: string;
   coverImageUrl: string;
-  sector: {
-    id: number;
-    name: string;
-  };
+  sectorId: string;
   promotion: boolean;
   discount: string;
 }
@@ -66,9 +72,13 @@ const NewCourseForm = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedModule, setSelectedModule] = useState<Module>({} as Module);
   const [addingNewLesson, setAddingNewLesson] = useState(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [newCourseId, setNewCourseId] = useState<number>();
   const [submitButton, setSubmitButton] = useState<
     "button" | "submit" | "reset" | undefined
   >("button");
+
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -87,9 +97,30 @@ const NewCourseForm = () => {
     return () => {};
   }, [step]);
 
-  const onSubmit = (data: Inputs) => {
-    const newData = { ...data, course: modules };
-    console.log(newData);
+  const onSubmit = async (data: Inputs, e?: React.BaseSyntheticEvent) => {
+    e?.preventDefault();
+    const newData = {
+      ...data,
+      language: "Spanish",
+      tools: data.tools.split(" "),
+      hashtags: data.hashtags.split(" "),
+      functionalities: data.functionalities.split(" "),
+      benefits: data.benefits.split(" "),
+      sectorId: parseInt(data.sectorId),
+      coursePrice: parseInt(data.coursePrice.toString()),
+      detailedDescription: [""],
+      coverImageUrl:
+        "https://cdn.elearningindustry.com/wp-content/uploads/2020/12/how-to-improve-your-elearning-course-cover-design-768x431.png",
+    };
+    try {
+      const respuesta = await newCourse(newData);
+      if (respuesta?.status === 201) {
+        setSuccess(true);
+        setNewCourseId(respuesta.data.id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleSaveModule = () => {
     if (!addingNewLesson) {
@@ -174,7 +205,7 @@ const NewCourseForm = () => {
                     type="radio"
                     name="coursePrice"
                     id="free"
-                    value="0.00"
+                    value={0}
                   />
                   <label htmlFor="free">Contenido gratuito</label>
                 </div>
@@ -184,7 +215,7 @@ const NewCourseForm = () => {
                     type="radio"
                     name="coursePrice"
                     id="premium"
-                    value="10.00"
+                    value={10}
                   />
                   <label htmlFor="premium">Contenido pago</label>
                 </div>
@@ -283,29 +314,14 @@ const NewCourseForm = () => {
                 <div>
                   <label>Elige el sector al que deseas dirigir el curso</label>
                   <select
-                    {...register("sector")}
-                    name="sector"
-                    className="w-full rounded-lg h-11 my-6"
-                    id="sector"
+                    {...register("sectorId")}
+                    name="sectorId"
+                    className="w-full rounded-lg h-11 my-6 text-black px-2"
+                    id="sectorId"
                   >
-                    <option
-                      value={JSON.stringify({ id: 1, name: "Tecnología" })}
-                    >
-                      Tecnología
-                    </option>
-                    <option
-                      value={JSON.stringify({ id: 2, name: "Programación" })}
-                    >
-                      Programación
-                    </option>
-                    <option
-                      value={JSON.stringify({
-                        id: 3,
-                        name: "Inteligencia Artificial",
-                      })}
-                    >
-                      Inteligencia Artificial
-                    </option>
+                    <option value={1}>Tecnología</option>
+                    <option value={2}>Programación</option>
+                    <option value={3}>Inteligencia Artificial</option>
                   </select>
                 </div>
                 <div>
@@ -477,6 +493,52 @@ const NewCourseForm = () => {
           Continuar
         </Button>
       </div>
+      <Modal isOpen={success} onOpenChange={setSuccess} placement="center">
+        <ModalContent className="bg-[#1F2937] px-14 py-16 text-center  max-w-[600px]">
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 font-bold">
+                ¡Felicitaciones! Tu {watch("courseType")} se publicó con éxito
+              </ModalHeader>
+              <ModalBody className="items-center">
+                <p className="text-xs">
+                  Ya está disponible para que estudiantes de todo el mundo lo
+                  descubran y aprovechen.
+                </p>
+                <Image
+                  src="/assets/icons/success.png"
+                  alt="success-icon"
+                  width={100}
+                  height={100}
+                  className="pt-6"
+                />
+              </ModalBody>
+              <ModalFooter className="flex flex-col items-center">
+                <Button
+                  variant="solid"
+                  onPress={() => {
+                    onClose();
+                    router.push(`/courses/${newCourseId}`);
+                  }}
+                  className="min-w-80 bg-primario500 text-white"
+                >
+                  Vista previa
+                </Button>
+                <Button
+                  variant="bordered"
+                  onPress={() => {
+                    onClose();
+                    router.push("/seller-dashboard");
+                  }}
+                  className="min-w-80 border-primario400 text-primario400"
+                >
+                  Volver al dashboard
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </form>
   );
 };
