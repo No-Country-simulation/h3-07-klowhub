@@ -9,8 +9,8 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = cookies();
-  const userRole = (await cookieStore).get("userRole")?.value;
-
+  const userRole = (await cookieStore).get("user_role")?.value;
+  console.log(userRole);
   if (userRole !== "admin") {
     redirect("/unauthorized");
   }
