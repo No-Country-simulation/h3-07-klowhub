@@ -22,6 +22,14 @@ html {
 body {
   color: white;
 }
+input {
+  color: black;
+  padding: 0 8px;
+}
+textarea {
+  color: black;
+  padding: 0 8px;
+}
 nextjs-portal {
   position: absolute;
 }

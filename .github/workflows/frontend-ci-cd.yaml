@@ -26,6 +26,7 @@ jobs:
       # Step 3: Install Dependencies
       - name: Install Dependencies
         run: |
+          git status
           pwd
           cd frontend/
           bun install
