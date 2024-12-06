@@ -7,7 +7,7 @@ import { cookies } from "next/headers";
 export const registerUser = async (datos: FieldValues) => {
   try {
     const respuesta = await axios.post(
-      "https://klowhub.onrender.com/api/auth",
+      `${process.env.NEXT_PUBLIC_API_ROOT}/auth/register`,
       {
         username: datos.name,
         password: datos.password,
@@ -37,7 +37,7 @@ export const registerUser = async (datos: FieldValues) => {
 export const loginUser = async (datos: FieldValues) => {
   try {
     const response = await axios.post(
-      "https://klowhub.onrender.com/api/auth/login",
+      `${process.env.NEXT_PUBLIC_API_ROOT}/auth/login`,
       {
         email: datos.email,
         password: datos.password,

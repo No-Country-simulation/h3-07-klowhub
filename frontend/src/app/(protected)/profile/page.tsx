@@ -45,7 +45,7 @@ const Page = () => {
 
     try {
       const response = await fetch(
-        "https://klowhub.onrender.com/api/users/imageprofile",
+        `${process.env.NEXT_PUBLIC_API_ROOT}}/users/imageprofile`,
         {
           method: "PATCH",
           body: formData,

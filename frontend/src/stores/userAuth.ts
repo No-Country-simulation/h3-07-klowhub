@@ -15,7 +15,7 @@ export const useAuth = () => {
     try {
       // Replace this with your actual API call
       const response = await await axios.post(
-        "https://klowhub.onrender.com/api/auth/login",
+        `${process.env.NEXT_PUBLIC_API_ROOT}/auth/login`,
         {
           email,
           password,
