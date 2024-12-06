@@ -19,7 +19,11 @@ enum Role {
 const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useSelector((state: RootState) => state.auth);
-
+  const [profileImage, setProfileImage] = useState(
+    user?.profileImage || "/assets/avatars/foto1.png"
+  );
+  const [isUploading, setIsUploading] = useState(false);
+  console.log(user?.profileImage);
   useEffect(() => {
     setIsLoading(false);
   }, []);
@@ -28,6 +32,41 @@ const Page = () => {
     return <div>Loading...</div>;
   }
 
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append("img", file);
+
+    try {
+      const response = await fetch(
+        "https://klowhub.onrender.com/api/users/imageprofile",
+        {
+          method: "PATCH",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${user?.access_token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update profile image");
+      }
+
+      const data = await response.json();
+      setProfileImage(data.imageUrl);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
   return (
     user && (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-x-12">
@@ -35,7 +74,11 @@ const Page = () => {
           <div className="grid grid-cols-1 sm:grid-cols-[30%_70%] 2xl:grid-cols-[20%_80%] gap-y-6">
             <div className="flex flex-col items-center justify-center gap-3">
               <Image
-                src={"/assets/avatars/foto1.png"}
+                src={
+                  user?.profileImage
+                    ? user.profileImage
+                    : "/assets/avatars/foto1.png"
+                }
                 alt="Avatar"
                 width={180}
                 height={180}
@@ -47,7 +90,15 @@ const Page = () => {
               >
                 Editar foto de perfil
               </label>
-              <input id="foto" name="foto" className="hidden" type="file" />
+              <input
+                id="foto"
+                name="foto"
+                className="hidden"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={isUploading}
+              />
               <p className="text-sm sm:text-base">{user?.username}</p>
             </div>
             <div className="flex flex-col justify-around">

@@ -9,6 +9,7 @@ interface User {
   role: "user" | "seller" | "admin" | "superadmin";
   username: string;
   _id: string;
+  profileImage: string;
 }
 interface AuthState {
   isAuthenticated: boolean;
