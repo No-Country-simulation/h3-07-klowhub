@@ -37,31 +37,23 @@ export class ImagesController {
     return this.imagesService.newUploadImage(file);
   }
 
-  /* @Post('uploadvideo')
-  @UseInterceptors(FileInterceptor('video'))
+  @Post('upload-pdf')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPdf(@UploadedFile() file: Express.Multer.File) {
+    return this.imagesService.newUploadFile(file);
+  }
+
+  @Post('upload-video')
+  @UseInterceptors(FileInterceptor('file'))
   async uploadVideo(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 10000000 }),
-          new FileTypeValidator({ fileType: 'video/mp4' }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
-  ) {
-    try {
-      // Cloudinary retorna automáticamente los detalles del archivo subido
-      console.log('File uploaded to Cloudinary:', file);
-      return { videoUrl: file.path }; // `file.path` contiene la URL del archivo en Cloudinary
-    } catch (error) {
-      console.error('Error uploading to Cloudinary:', error);
-      throw new HttpException(error.message, 500);
-    }
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<string> {
+    return this.imagesService.uploadVideo(file);
+  }
+
+  /*   @Post('upload-pdf')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPdf(@UploadedFile() file: Express.Multer.File): Promise<string> {
+    return this.imagesService.uploadPdf(file);
   } */
-    @Post('upload-video')
-    @UseInterceptors(FileInterceptor('file'))
-    async uploadVideo(@UploadedFile() file: Express.Multer.File): Promise<string> {
-      return this.imagesService.uploadVideo(file);
-    }
 }
