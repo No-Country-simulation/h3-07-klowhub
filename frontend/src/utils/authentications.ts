@@ -1,6 +1,8 @@
+"use server";
 import axios from "axios";
 import { FieldValues } from "react-hook-form";
 import Cookies from "js-cookie";
+import { cookies } from "next/headers";
 
 export const registerUser = async (datos: FieldValues) => {
   try {
@@ -60,4 +62,10 @@ export const loginUser = async (datos: FieldValues) => {
     console.error("Error during login:", error);
     throw error;
   }
+};
+
+export const getServerSideToken = async () => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth_token");
+  return token?.value;
 };

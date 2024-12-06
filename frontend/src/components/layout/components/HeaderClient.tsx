@@ -32,7 +32,7 @@ export default function HeaderClient() {
     { url: "/sobre", text: "Sobre KlowHub" },
   ];
   const menuCreador = [
-    { url: "/creador", text: "Dasboard" },
+    { url: "/seller-dashboard", text: "Dasboard" },
     { url: "/creador/creador", text: "Ganancias" },
     { url: "/creador/creador", text: "Mis productos" },
     { url: "/creador/creador", text: "Ver proyectos disponibles" },
@@ -76,7 +76,11 @@ export default function HeaderClient() {
 
   const handleLogout = () => {
     logout();
+    setTimeout(() => {
+      router.push("/");
+    }, 2000);
   };
+
   return (
     <>
       <Modal
