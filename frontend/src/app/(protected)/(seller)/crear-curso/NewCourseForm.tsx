@@ -106,21 +106,27 @@ const NewCourseForm = () => {
         const dataToSend = {
           courseName: watch("courseName"),
           courseType: watch("courseType"),
+          courseDescription: watch("courseDescription"),
+          courseLevel: watch("courseLevel"),
+          pilar: watch("pilar"),
+          requirements: watch("requirements"),
+          whatYouWillLearn: watch("whatYouWillLearn"),
+          contentTypes: watch("contentTypes"),
+          platform: watch("platform"),
           language: "Spanish",
-          tools: data.tools.split(" "),
-          hashtags: data.hashtags.split(" "),
-          functionalities: data.functionalities.split(" "),
-          benefits: data.benefits.split(" "),
-          sectorId: parseInt(data.sectorId),
+          tools: watch("tools").split(" "),
+          hashtags: watch("hashtags").split(" "),
+          functionalities: watch("functionalities").split(" "),
+          benefits: watch("benefits").split(" "),
+          sectorId: parseInt(watch("sectorId")),
           coursePrice: parseInt(watch("coursePrice").toString()),
           detailedDescription: [""],
           coverImageUrl:
             "https://cdn.elearningindustry.com/wp-content/uploads/2020/12/how-to-improve-your-elearning-course-cover-design-768x431.png",
         };
         try {
-          const respuesta = await newCourse(newData);
+          const respuesta = await newCourse(dataToSend);
           if (respuesta?.status === 201) {
-            setSuccess(true);
             setNewCourseId(respuesta.data.id);
           }
         } catch (error) {
@@ -130,6 +136,8 @@ const NewCourseForm = () => {
       case steps.modulosyLecciones:
         setStep(steps.promociones);
         break;
+      case steps.promociones:
+        setSuccess(true);
     }
   };
   const onSubmit = async (data: Inputs, e?: React.BaseSyntheticEvent) => {
@@ -140,14 +148,6 @@ const NewCourseForm = () => {
       const newModule: Module = {
         moduleName: moduleName,
         moduleDescription: moduleDescription,
-        lessons: [
-          {
-            title: lessonTitle,
-            description: lessonDescription,
-            videoUrl: videoUrl ? videoUrl : null,
-            pdfUrl: pdfUrl ? pdfUrl : null,
-          },
-        ],
       };
       setModules([...modules, newModule]);
       setSelectedModule(newModule);

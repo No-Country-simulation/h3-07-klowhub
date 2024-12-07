@@ -3,7 +3,6 @@ import { getServerSideToken } from "../authentications";
 
 interface Inputs {
   courseName: string;
-  period: boolean;
   courseType: string;
   courseDescription: string;
   coursePrice: number;
@@ -20,8 +19,6 @@ interface Inputs {
   benefits: string[];
   coverImageUrl: string;
   sectorId: number;
-  promotion: boolean;
-  discount: string;
 }
 
 /* const getAuthToken = (name: string): string | null => {
