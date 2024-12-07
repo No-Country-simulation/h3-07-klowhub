@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import UploadFileInput from "../../(user)/up-to-seller/components/UploadFileInput";
 import ModulesAndLessons from "./ModulesAndLessons";
 import Promotions from "./Promotions";
-import { newCourse } from "@/utils/courses/courses";
+import { newCourse, newModule } from "@/utils/courses/courses";
 import {
   Modal,
   ModalBody,
@@ -26,9 +26,8 @@ export interface Lesson {
   pdfUrl: File[] | null;
 }
 export interface Module {
-  title: string;
-  description: string;
-  lessons: Lesson[];
+  moduleName: string;
+  moduleDescription: string;
 }
 
 export interface Inputs {
@@ -63,7 +62,7 @@ export enum steps {
 const NewCourseForm = () => {
   const [step, setStep] = useState<steps>(steps.general);
   const [editing, setEditing] = useState(true);
-  const [moduleTitle, setModuleTitle] = useState<string>("");
+  const [moduleName, setModuleTitle] = useState<string>("");
   const [moduleDescription, setModuleDescription] = useState<string>("");
   const [lessonTitle, setLessonTitle] = useState<string>("");
   const [lessonDescription, setLessonDescription] = useState("");
@@ -72,7 +71,7 @@ const NewCourseForm = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedModule, setSelectedModule] = useState<Module>({} as Module);
   const [addingNewLesson, setAddingNewLesson] = useState(false);
-  const [success, setSuccess] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(true);
   const [newCourseId, setNewCourseId] = useState<number>();
   const [submitButton, setSubmitButton] = useState<
     "button" | "submit" | "reset" | undefined
@@ -97,36 +96,50 @@ const NewCourseForm = () => {
     return () => {};
   }, [step]);
 
+  const handleStepUp = async () => {
+    switch (step) {
+      case steps.general:
+        setStep(steps.detalles);
+        break;
+      case steps.detalles:
+        setStep(steps.modulosyLecciones);
+        const dataToSend = {
+          courseName: watch("courseName"),
+          courseType: watch("courseType"),
+          language: "Spanish",
+          tools: data.tools.split(" "),
+          hashtags: data.hashtags.split(" "),
+          functionalities: data.functionalities.split(" "),
+          benefits: data.benefits.split(" "),
+          sectorId: parseInt(data.sectorId),
+          coursePrice: parseInt(watch("coursePrice").toString()),
+          detailedDescription: [""],
+          coverImageUrl:
+            "https://cdn.elearningindustry.com/wp-content/uploads/2020/12/how-to-improve-your-elearning-course-cover-design-768x431.png",
+        };
+        try {
+          const respuesta = await newCourse(newData);
+          if (respuesta?.status === 201) {
+            setSuccess(true);
+            setNewCourseId(respuesta.data.id);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+        break;
+      case steps.modulosyLecciones:
+        setStep(steps.promociones);
+        break;
+    }
+  };
   const onSubmit = async (data: Inputs, e?: React.BaseSyntheticEvent) => {
     e?.preventDefault();
-    const newData = {
-      ...data,
-      language: "Spanish",
-      tools: data.tools.split(" "),
-      hashtags: data.hashtags.split(" "),
-      functionalities: data.functionalities.split(" "),
-      benefits: data.benefits.split(" "),
-      sectorId: parseInt(data.sectorId),
-      coursePrice: parseInt(data.coursePrice.toString()),
-      detailedDescription: [""],
-      coverImageUrl:
-        "https://cdn.elearningindustry.com/wp-content/uploads/2020/12/how-to-improve-your-elearning-course-cover-design-768x431.png",
-    };
-    try {
-      const respuesta = await newCourse(newData);
-      if (respuesta?.status === 201) {
-        setSuccess(true);
-        setNewCourseId(respuesta.data.id);
-      }
-    } catch (error) {
-      console.log(error);
-    }
   };
   const handleSaveModule = () => {
     if (!addingNewLesson) {
       const newModule: Module = {
-        title: moduleTitle,
-        description: moduleDescription,
+        moduleName: moduleName,
+        moduleDescription: moduleDescription,
         lessons: [
           {
             title: lessonTitle,
@@ -142,7 +155,7 @@ const NewCourseForm = () => {
       setEditing(false);
     } else {
       const moduleToModify = modules.find(
-        (module) => module.title === selectedModule.title
+        (module) => module.moduleName === selectedModule.moduleName
       );
       if (moduleToModify) {
         const newLesson: Lesson = {
@@ -154,7 +167,7 @@ const NewCourseForm = () => {
         moduleToModify.lessons.push(newLesson);
         setModules(
           modules.map((m) =>
-            m.title === moduleToModify.title ? moduleToModify : m
+            m.moduleName === moduleToModify.moduleName ? moduleToModify : m
           )
         );
         console.log("hola");
@@ -475,19 +488,7 @@ const NewCourseForm = () => {
         <Button
           variant="solid"
           className="bg-primario500 text-white px-16 rounded-lg hover:bg-primario300"
-          onClick={() => {
-            switch (step) {
-              case steps.general:
-                setStep(steps.detalles);
-                break;
-              case steps.detalles:
-                setStep(steps.modulosyLecciones);
-                break;
-              case steps.modulosyLecciones:
-                setStep(steps.promociones);
-                break;
-            }
-          }}
+          onClick={handleStepUp}
           type={submitButton}
         >
           Continuar
