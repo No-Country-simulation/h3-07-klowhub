@@ -23,16 +23,16 @@ export class CreateSellerDto {
     'Equipo de desarrollo',
     'AppSheet Expert',
   ])
-  sellerType: string; // Tipo de vendedor
+  sellerType: string;
 
   @IsOptional()
   @IsUrl()
   portfolioWebLink?: string; // Enlace al portafolio web
 
   @IsNotEmpty()
-  @IsArray()
+  @IsString()
   @IsEnum(['Crypto', 'Paypal', 'Stripe'], { each: true })
-  receivePayments: string[]; // Métodos de pago aceptados
+  receivePayments: string;
 
   @IsNotEmpty()
   @IsString()

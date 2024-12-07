@@ -9,7 +9,7 @@ const getCookie = (name: string): string | null => {
 };
 const token = getCookie("auth_token");
 export const getProfile = async () => {
-  const data = await axios.get("https://klowhub.onrender.com/api/users", {
+  const data = await axios.get(`${process.env.NEXT_PUBLIC_API_ROOT}/users`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

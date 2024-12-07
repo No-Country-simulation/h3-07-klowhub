@@ -9,6 +9,7 @@ import { UserSchema } from 'src/auth/models/user.model';
 import { ConfigService } from '@nestjs/config';
 import { SellerSchema } from 'src/auth/models/seller.model';
 import { PlanSchema } from 'src/plans/models/plan.model';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { PlanSchema } from 'src/plans/models/plan.model';
     ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, EmailService, AuthService],
+  providers: [UsersService, EmailService, AuthService, NotificationsService],
 })
 export class UsersModule {}

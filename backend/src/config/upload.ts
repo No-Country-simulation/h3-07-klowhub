@@ -46,7 +46,7 @@ export const uploadCloudinaryVideo = async (
 
   return new Promise((resolve, reject) => {
     const upload = cloudinary.uploader.upload_stream(
-      { resource_type: 'video', folder: 'videos' }, 
+      { resource_type: 'video', folder: 'videos' },
       (error, result) => {
         if (error) {
           reject(error);
@@ -55,6 +55,33 @@ export const uploadCloudinaryVideo = async (
         }
       },
     );
+    toStream(file.buffer).pipe(upload);
+  });
+};
+
+export const uploadCloudinaryPdf = async (
+  file: Express.Multer.File,
+): Promise<{ secure_url: string }> => {
+  if (!file || !file.buffer) {
+    throw new Error(
+      'El archivo no se ha recibido correctamente o no contiene un buffer.',
+    );
+  }
+
+  return new Promise((resolve, reject) => {
+    const uploadOptions = {
+      resource_type: 'auto', // Permite subir imágenes, videos, PDFs, etc.
+      folder: 'pdfs', // Opcional: organiza los archivos en una carpeta.
+    };
+
+    const upload = v2.uploader.upload_stream((error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+
     toStream(file.buffer).pipe(upload);
   });
 };

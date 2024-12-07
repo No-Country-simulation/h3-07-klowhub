@@ -1,4 +1,4 @@
-import { Type } from "@nestjs/common";
+import { Type } from '@nestjs/common';
 
 export class UserResponseDto {
   access_token: string;
@@ -6,4 +6,5 @@ export class UserResponseDto {
   role: string;
   username: string;
   email: string;
+  profileImage: string;
 }
