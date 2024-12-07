@@ -8,6 +8,8 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Sobre from "./components/sobre";
+import { getServerSideToken } from "@/utils/authentications";
+import Notifications from "./components/notifications";
 
 enum Role {
   admin = "Administrador",
@@ -16,14 +18,14 @@ enum Role {
   superadmin = "Super Administrador",
 }
 
-const Page = () => {
+export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useSelector((state: RootState) => state.auth);
   const [profileImage, setProfileImage] = useState(
     user?.profileImage || "/assets/avatars/foto1.png"
   );
   const [isUploading, setIsUploading] = useState(false);
-  console.log(user?.profileImage);
+
   useEffect(() => {
     setIsLoading(false);
   }, []);
@@ -45,7 +47,7 @@ const Page = () => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_ROOT}}/users/imageprofile`,
+        `${process.env.NEXT_PUBLIC_API_ROOT}/users/imageprofile`,
         {
           method: "PATCH",
           body: formData,
@@ -228,9 +230,8 @@ const Page = () => {
             Ir a los recursos
           </button>
         </AdminCard>
+        <Notifications />
       </div>
     )
   );
-};
-
-export default Page;
+}

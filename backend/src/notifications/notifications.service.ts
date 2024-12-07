@@ -6,6 +6,15 @@ import { User, UserDocument } from 'src/auth/models/user.model';
 import { Model } from 'mongoose';
 import { EmailService } from 'src/email/email.service';
 import { CreateAdminNotificationDto } from './dto/createAdminNotification.dto';
+import { GetUserDto } from './dto/get-user.dto';
+
+interface Notification {
+  _id: string; // Incluye esta propiedad
+  message: string;
+  type: string;
+  createdAt: Date;
+  read: boolean;
+}
 
 @Injectable()
 export class NotificationsService {
@@ -24,7 +33,6 @@ export class NotificationsService {
           createdAt: new Date(),
           read: false,
         });
-        //sendEmailNotification
         await this.emailService.sendEmailNotification(
           admin.email,
           `El usuario ${createNotificationDto.userName} ha creado el curso "${createNotificationDto.courseName}".`,
@@ -60,12 +68,36 @@ export class NotificationsService {
     }
   }
 
-  findAll() {
-    return `This action returns all notifications`;
+  async findAll(user: GetUserDto) {
+    console.log(user);
+    try {
+      const result = await this.userModel
+        .findById({ _id: user._id })
+        .select('notifications');
+      return result;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   findOne(id: number) {
     return `This action returns a #${id} notification`;
+  }
+
+  async readNotification(user: GetUserDto, notificationId: string) {
+   
+    try {
+      const userFound = await this.userModel.findById({ _id: user._id });
+
+      userFound.notifications.map((notification: Partial<Notification>) => {
+        if (notification._id.toString() === notificationId.toString()) {
+          notification.read = true;
+        }
+      });
+      await userFound.save();
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   update(id: number, updateNotificationDto: UpdateNotificationDto) {

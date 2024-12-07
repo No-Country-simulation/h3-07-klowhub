@@ -1,6 +1,28 @@
-import DashCard from "@/components/cards/DashCard";
+"use client";
 
-export default function StatisticsView() {
+import { useEffect, useState } from "react";
+import DashCard from "@/components/cards/DashCard";
+import { getUsers } from "@/utils/admin/dashboard/stadistic";
+interface User {
+  totalUsers: number;
+  activeUsers: number;
+}
+const StatisticsView = () => {
+  const [users, setUsers] = useState(null as User | null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getUsers();
+      setUsers(data);
+    };
+
+    fetchData();
+  }, []);
+
+  if (!users) {
+    return <div>Cargando estadísticas...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <section className="bg-[#1F2937] rounded-lg shadow-lg p-4 sm:p-6">
@@ -8,39 +30,32 @@ export default function StatisticsView() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <DashCard classNames="w-full">
             <h3 className="font-semibold text-sm sm:text-base">
-              Total de usuarios activos
+              Total de usuarios
             </h3>
-            <p className="text-primario300 text-3xl sm:text-5xl mt-2">20</p>
+            <p className="text-primario300 text-3xl sm:text-5xl mt-2">
+              {users.totalUsers}
+            </p>
           </DashCard>
           <DashCard classNames="w-full">
             <h3 className="font-semibold text-sm sm:text-base">
-              Total de usuarios registrados
+              Total de usuarios activos
             </h3>
-            <p className="text-primario300 text-3xl sm:text-5xl mt-2">100</p>
+            <p className="text-primario300 text-3xl sm:text-5xl mt-2">
+              {users.activeUsers}
+            </p>
           </DashCard>
           <DashCard classNames="w-full">
-            <h3 className="font-semibold text-sm sm:text-base mb-2">
-              Nuevos Usuarios
+            <h3 className="font-semibold text-sm sm:text-base">
+              Usuarios nuevos
             </h3>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="text-center">
-                <p className="font-semibold text-xs sm:text-sm">Diario</p>
-                <p className="text-primario300 text-xl sm:text-2xl">3</p>
-              </div>
-              <div className="text-center">
-                <p className="font-semibold text-xs sm:text-sm">Semanal</p>
-                <p className="text-primario300 text-xl sm:text-2xl">10</p>
-              </div>
-              <div className="text-center">
-                <p className="font-semibold text-xs sm:text-sm">Mensual</p>
-                <p className="text-primario300 text-xl sm:text-2xl">30</p>
-              </div>
-            </div>
+            <p className="text-primario300 text-3xl sm:text-5xl mt-2">
+              {users.activeUsers}
+            </p>
           </DashCard>
         </div>
       </section>
-
-      {/* Add more sections here following the same pattern */}
     </div>
   );
-}
+};
+
+export default StatisticsView;

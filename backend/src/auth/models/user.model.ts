@@ -83,7 +83,6 @@ export class User {
 
   @Prop({ type: [NotificationSchema], default: [] })
   notifications: Notification[];
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
