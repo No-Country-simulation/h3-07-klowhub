@@ -38,6 +38,7 @@ jobs:
           cd frontend/
           sudo systemctl stop klowhub-front.service || true
           # Stop frontend service
+          cp ~/proyect/h3-07-klowhub/frontend/.env .
           bun run build
 
       # Step 5: Deploy
