@@ -20,10 +20,10 @@ import {
 import { useRouter } from "next/navigation";
 
 export interface Lesson {
-  title: string;
-  description: string;
-  videoUrl: File | null;
-  pdfUrl: File[] | null;
+  lessonTitle: string;
+  lessonDescription: string;
+  lessonVideo: string;
+  lessonImage: string;
 }
 export interface Module {
   moduleName: string;
@@ -66,10 +66,14 @@ const NewCourseForm = () => {
   const [moduleDescription, setModuleDescription] = useState<string>("");
   const [lessonTitle, setLessonTitle] = useState<string>("");
   const [lessonDescription, setLessonDescription] = useState("");
-  const [videoUrl, setVideoUrl] = useState<File>();
+  const [videoUrl, setVideoUrl] = useState<string>();
   const [pdfUrl, setPdfUrl] = useState<File[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
-  const [selectedModule, setSelectedModule] = useState<Module>({} as Module);
+  const [selectedModule, setSelectedModule] = useState({
+    moduleName: "",
+    moduleDescription: "",
+  });
+  const [errorMessage, setErrorMessage] = useState<string>();
   const [addingNewLesson, setAddingNewLesson] = useState(false);
   const [success, setSuccess] = useState<boolean>(true);
   const [newCourseId, setNewCourseId] = useState<number>();
@@ -102,7 +106,6 @@ const NewCourseForm = () => {
         setStep(steps.detalles);
         break;
       case steps.detalles:
-        setStep(steps.modulosyLecciones);
         const dataToSend = {
           courseName: watch("courseName"),
           courseType: watch("courseType"),
@@ -119,7 +122,7 @@ const NewCourseForm = () => {
           functionalities: watch("functionalities").split(" "),
           benefits: watch("benefits").split(" "),
           sectorId: parseInt(watch("sectorId")),
-          coursePrice: parseInt(watch("coursePrice").toString()),
+          coursePrice: watch("coursePrice"),
           detailedDescription: [""],
           coverImageUrl:
             "https://cdn.elearningindustry.com/wp-content/uploads/2020/12/how-to-improve-your-elearning-course-cover-design-768x431.png",
@@ -128,6 +131,14 @@ const NewCourseForm = () => {
           const respuesta = await newCourse(dataToSend);
           if (respuesta?.status === 201) {
             setNewCourseId(respuesta.data.id);
+            setStep(steps.modulosyLecciones);
+          }
+          console.log(respuesta?.status);
+
+          if (respuesta?.status === 400) {
+            setErrorMessage(
+              "Controle de rellenar todos los campos correctamente"
+            );
           }
         } catch (error) {
           console.log(error);
@@ -143,34 +154,46 @@ const NewCourseForm = () => {
   const onSubmit = async (data: Inputs, e?: React.BaseSyntheticEvent) => {
     e?.preventDefault();
   };
-  const handleSaveModule = () => {
+  const handleSaveModule = async () => {
     if (!addingNewLesson) {
-      const newModule: Module = {
+      /* const newModule: Module = {
         moduleName: moduleName,
         moduleDescription: moduleDescription,
-      };
-      setModules([...modules, newModule]);
-      setSelectedModule(newModule);
+      }; */
+      setModules([
+        ...modules,
+        {
+          moduleName: moduleName,
+          moduleDescription: moduleDescription,
+        },
+      ]);
+      const newModuleId = await newModule({
+        id: newCourseId!,
+        data: {
+          moduleName: moduleName,
+          moduleDescription: moduleDescription,
+        },
+      });
+      setSelectedModule(newModuleId?.data);
       setValue("course", modules);
       setEditing(false);
     } else {
       const moduleToModify = modules.find(
-        (module) => module.moduleName === selectedModule.moduleName
+        (module) => module.moduleName === selectedModule?.moduleName
       );
       if (moduleToModify) {
         const newLesson: Lesson = {
-          title: lessonTitle,
-          description: lessonDescription,
-          videoUrl: videoUrl ? videoUrl : null,
-          pdfUrl: pdfUrl ? pdfUrl : null,
+          lessonTitle,
+          lessonDescription,
+          lessonVideo: videoUrl || "",
+          lessonImage: "",
         };
-        moduleToModify.lessons.push(newLesson);
+
         setModules(
           modules.map((m) =>
             m.moduleName === moduleToModify.moduleName ? moduleToModify : m
           )
         );
-        console.log("hola");
         setValue("course", modules);
         setEditing(false);
         setAddingNewLesson(false);
@@ -428,6 +451,11 @@ const NewCourseForm = () => {
                   setValue={setValue}
                 />
               </div>
+              {errorMessage && (
+                <div className="w-full text-center col-span-2">
+                  <p className="text-sm text-red-500 ">{errorMessage}</p>
+                </div>
+              )}
             </section>
           )
         )}

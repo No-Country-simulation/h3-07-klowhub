@@ -5,6 +5,8 @@ import UploadPDFFileInput from "./UploadPDFInput";
 import { Button } from "@nextui-org/button";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { UseFormSetValue } from "react-hook-form";
+import { HandleVideoUpload } from "@/utils/fileHandle";
+import { useState } from "react";
 
 interface ModulesAndLessonsProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,6 +48,21 @@ const ModulesAndLessons = ({
   setModuleDescription,
   handleSaveModule,
 }: ModulesAndLessonsProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const uploadvideo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      return;
+    }
+    setLoading(true);
+    try {
+      setLessonVideoUrl(await HandleVideoUpload(e.target.files[0]));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       {editing ? (
@@ -97,7 +114,7 @@ const ModulesAndLessons = ({
                   </label>
                   <input
                     type="file"
-                    onChange={(e) => setLessonVideoUrl(e.target.files?.[0])}
+                    onChange={uploadvideo}
                     className="rounded-tr-lg rounded-br-lg px-4 py-3 text-sm text-black w-2/6"
                     name="lessionLink"
                     id="lessionLink"
@@ -114,8 +131,9 @@ const ModulesAndLessons = ({
               <div className="w-full flex gap-2 justify-end">
                 <Button
                   variant="bordered"
-                  className="border-primario300 hover:border-primario400 text-primario300 hover:text-primario400 rounded-lg"
+                  className="border-primario300 disabled:border-gray-400 disabled:text-gray-400 hover:border-primario400 text-primario300 hover:text-primario400 rounded-lg"
                   onClick={handleSaveModule}
+                  disabled={loading}
                 >
                   Guardar
                 </Button>
@@ -127,24 +145,30 @@ const ModulesAndLessons = ({
         <>
           <div className="flex flex-col gap-4 mb-12 text-sm font-semibold">
             <h2>Titulo del módulo</h2>
-            <p>{selectedModule.title}</p>
+            <p>{selectedModule.moduleName}</p>
           </div>
           <div className="flex flex-col gap-4 mb-12 text-sm font-semibold">
             <h2>Descripción</h2>
-            <p className="text-sm font-normal">{selectedModule.description}</p>
+            <p className="text-sm font-normal">
+              {selectedModule.moduleDescription}
+            </p>
           </div>
           {!addingNewLesson &&
             modules?.map((module) => (
-              <div onClick={() => setSelectedModule(module)} key={module.title}>
+              <div
+                onClick={() => setSelectedModule(module)}
+                key={module.moduleName}
+              >
                 <DashCard classNames="mt-6 cursor-pointer">
-                  <h1 className="pb-4">Modulo 1: {module.title}</h1>
+                  <h1 className="pb-4">Modulo 1: {module.moduleName}</h1>
                   <DashCard>
                     <Accordion selectionMode="multiple">
-                      {module.lessons.map((lesson) => (
+                      {/* {module.lessons.map((lesson) => (
                         <AccordionItem key={lesson.title} title={lesson.title}>
                           <p>{lesson.description}</p>
                         </AccordionItem>
-                      ))}
+                      ))} */}
+                      <p>a</p>
                     </Accordion>
                   </DashCard>
                 </DashCard>
@@ -176,16 +200,18 @@ const ModulesAndLessons = ({
                   <div>
                     <label
                       className="bg-transparent border border-primario300 rounded-bl-lg rounded-tl-lg text-primario200 px-4 py-3 text-sm font-semibold"
-                      htmlFor="lessionLink"
+                      htmlFor="lessonVideo"
                     >
                       Enlace
                     </label>
                     <input
                       type="file"
-                      onChange={(e) => setLessonVideoUrl(e.target.files?.[0])}
+                      onChange={(e) =>
+                        setValue("lessonVideo", e.target.files?.[0])
+                      }
                       className="rounded-tr-lg rounded-br-lg px-4 py-3 text-sm text-black w-2/6"
-                      name="lessionLink"
-                      id="lessionLink"
+                      name="lessonVideo"
+                      id="lessonVideo"
                     />
                   </div>
                 </div>

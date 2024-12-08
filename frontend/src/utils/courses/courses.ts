@@ -1,5 +1,6 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { getServerSideToken } from "../authentications";
+import { Module } from "@/app/(protected)/(seller)/crear-curso/NewCourseForm";
 
 interface Inputs {
   courseName: string;
@@ -29,7 +30,7 @@ interface Inputs {
 }; */
 
 export const newCourse = async (data: Inputs) => {
-  const token = getServerSideToken();
+  const token = await getServerSideToken();
   try {
     const datos = await axios.post(
       `${process.env.NEXT_PUBLIC_API_ROOT}/courses`,
@@ -40,15 +41,17 @@ export const newCourse = async (data: Inputs) => {
         },
       }
     );
-    if (datos.status !== 201) {
-      throw new Error("Error al crear el curso");
-    }
 
-    if (datos.status === 201) {
-      return datos;
+    return datos;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status === 401)
+        console.log("Error de autorización. Verificar Token");
+      if (axiosError.response?.status === 400) {
+        return axiosError.response;
+      }
     }
-  } catch (error) {
-    console.log(error);
   }
 };
 
@@ -71,6 +74,30 @@ export const getCourses = async () => {
     }
 
     if (datos.status === 200) {
+      return datos;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const newModule = async ({ id, data }: { id: number; data: Module }) => {
+  const token = await getServerSideToken();
+  try {
+    const datos = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_ROOT}/courses/${id}/modules`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (datos.status !== 201) {
+      throw new Error("Error al crear el módulo");
+    }
+
+    if (datos.status === 201) {
       return datos;
     }
   } catch (error) {

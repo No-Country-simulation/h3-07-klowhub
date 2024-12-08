@@ -3,7 +3,7 @@ import { UseFormSetValue } from "react-hook-form";
 import UploadIcon from "./UploadIcon";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { HandleFileUpload } from "@/utils/fileHandle";
+import { HandleImageUpload } from "@/utils/fileHandle";
 
 interface UploadFileInputProps {
   detalleImagen: string;
@@ -28,7 +28,7 @@ const UploadFileInput = ({
           setIsUploading(true);
           const formData = new FormData();
           formData.append("file", acceptedFiles[0]);
-          const respuesta = await HandleFileUpload(formData);
+          const respuesta = await HandleImageUpload(formData);
           setValue(fieldName, respuesta.imageUrl);
           setIsUploaded(true);
         } catch (error) {

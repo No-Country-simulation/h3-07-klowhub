@@ -3,7 +3,7 @@ import { UseFormSetValue } from "react-hook-form";
 
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { HandleFileUpload } from "@/utils/fileHandle";
+import { HandleImageUpload } from "@/utils/fileHandle";
 import UploadIcon from "../../(user)/up-to-seller/components/UploadIcon";
 
 interface UploadFileInputProps {
@@ -27,7 +27,7 @@ const UploadPDFFileInput = ({
           setIsUploading(true);
           const formData = new FormData();
           formData.append("file", acceptedFiles[0]);
-          const respuesta = await HandleFileUpload(formData);
+          const respuesta = await HandleImageUpload(formData);
           setValue(fieldName, respuesta.imageUrl);
           setIsUploaded(true);
         } catch (error) {
