@@ -8,7 +8,6 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Sobre from "./components/sobre";
-import { getServerSideToken } from "@/utils/authentications";
 import Notifications from "./components/notifications";
 
 enum Role {
@@ -76,11 +75,7 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 sm:grid-cols-[30%_70%] 2xl:grid-cols-[20%_80%] gap-y-6">
             <div className="flex flex-col items-center justify-center gap-3">
               <Image
-                src={
-                  user?.profileImage
-                    ? user.profileImage
-                    : "/assets/avatars/foto1.png"
-                }
+                src={profileImage}
                 alt="Avatar"
                 width={180}
                 height={180}

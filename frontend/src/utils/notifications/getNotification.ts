@@ -2,7 +2,10 @@ import axios from "axios";
 import { getServerSideToken } from "../authentications";
 
 export const getNotifications = async () => {
-  const token = getServerSideToken();
+  const token = await getServerSideToken();
+  if (!token) {
+    throw new Error("No token found");
+  }
   try {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_ROOT}/notifications`,
@@ -15,7 +18,6 @@ export const getNotifications = async () => {
     if (response.status !== 200) {
       throw new Error("Error al obtener las notificaciones");
     }
-    console.log("asdasd", response);
     return response.data;
   } catch (error) {
     console.error("Error al obtener notificaciones:", error);
@@ -25,12 +27,12 @@ export const getNotifications = async () => {
 
 import { GetServerSideProps } from "next";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const notifications = await getNotifications();
 
   return {
     props: {
-      notifications,
+      notifications: JSON.parse(JSON.stringify(notifications)),
     },
   };
 };

@@ -26,13 +26,22 @@ const page = async () => {
           <DashCard classNames="h-[200px]">
             <p>Listado de clientes a los que se les vendió cursos</p>
           </DashCard>
-          <section className="my-10">
+          <section className="my-10 grid grid-cols-4 gap-5">
             {courses &&
-              courses.data.map((course) => (
-                <DashCard key={course.id} classNames="h-[200px]">
-                  <p>{course.courseName}</p>
-                </DashCard>
-              ))}
+              courses.data.map(
+                (course: {
+                  id: number;
+                  courseName: string;
+                  courseDescription: string;
+                }) => (
+                  <DashCard key={course.id} classNames="h-[200px]">
+                    <h2 className="mb-6 font-bold">{course.courseName}</h2>
+                    <p className="text-sm font-semibold">
+                      {course.courseDescription}
+                    </p>
+                  </DashCard>
+                )
+              )}
           </section>
         </DashCard>
       </section>

@@ -81,7 +81,13 @@ export const getCourses = async () => {
   }
 };
 
-export const newModule = async ({ id, data }: { id: number; data: Module }) => {
+export const newModule = async ({
+  id,
+  data,
+}: {
+  id: number;
+  data: Module[];
+}) => {
   const token = await getServerSideToken();
   try {
     const datos = await axios.post(

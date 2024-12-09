@@ -16,7 +16,6 @@ interface NotificationState {
   error: string | null;
 }
 
-
 const initialState: NotificationState = {
   notifications: [],
   loading: false,
@@ -38,6 +37,7 @@ export const fetchNotifications = createAsyncThunk(
       );
       console.log(response);
       return response.data; // Suponiendo que el backend retorna un array de notificaciones
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data || "Error al obtener notificaciones"
@@ -52,7 +52,7 @@ const notificationSlice = createSlice({
   reducers: {
     markAsRead: (state, action) => {
       const id = action.payload;
-      const notification = state.notifications.find((n) => n.id === id);
+      const notification = state.notifications.find((n) => n._id === id);
       if (notification) {
         notification.read = true;
       }

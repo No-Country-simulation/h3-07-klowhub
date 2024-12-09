@@ -1,7 +1,7 @@
 export interface Notification {
   id: string;
-  title: string;
+  type: string;
   message: string;
-  timestamp: string;
+  createdAt: string;
   read: boolean;
 }

@@ -1,6 +1,6 @@
 "use client";
 import DashCard from "@/components/cards/DashCard";
-import { Module } from "./NewCourseForm";
+import { Lesson, Module } from "./NewCourseForm";
 import UploadPDFFileInput from "./UploadPDFInput";
 import { Button } from "@nextui-org/button";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
@@ -13,8 +13,10 @@ interface ModulesAndLessonsProps {
   setValue: UseFormSetValue<any>;
   editing: boolean;
   setEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedModule: React.Dispatch<React.SetStateAction<Module>>;
-  selectedModule: Module;
+  setSelectedModule: React.Dispatch<
+    React.SetStateAction<Module | null | undefined>
+  >;
+  selectedModule: Module | null | undefined;
   modules?: Module[];
   setModules?: React.Dispatch<React.SetStateAction<Module[]>>;
   lessonTitle: string;
@@ -23,10 +25,10 @@ interface ModulesAndLessonsProps {
   setLessonDescription: React.Dispatch<React.SetStateAction<string>>;
   setModuleTitle: React.Dispatch<React.SetStateAction<string>>;
   setModuleDescription: React.Dispatch<React.SetStateAction<string>>;
-  lessonVideoUrl: File | undefined;
-  lessonPdfUrl: File[];
-  setLessonVideoUrl: React.Dispatch<React.SetStateAction<File | undefined>>;
-  setLessonPdfUrl: React.Dispatch<React.SetStateAction<File[]>>;
+  lessonVideoUrl: string | undefined;
+  lessonPdfUrl: string;
+  setLessonVideoUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setLessonPdfUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
   handleSaveModule: () => void;
   addingNewLesson: boolean;
   setAddingNewLesson: React.Dispatch<React.SetStateAction<boolean>>;
@@ -145,30 +147,36 @@ const ModulesAndLessons = ({
         <>
           <div className="flex flex-col gap-4 mb-12 text-sm font-semibold">
             <h2>Titulo del módulo</h2>
-            <p>{selectedModule.moduleName}</p>
+            <p>{selectedModule?.modulName}</p>
           </div>
           <div className="flex flex-col gap-4 mb-12 text-sm font-semibold">
             <h2>Descripción</h2>
             <p className="text-sm font-normal">
-              {selectedModule.moduleDescription}
+              {selectedModule?.modulDescription}
             </p>
           </div>
           {!addingNewLesson &&
-            modules?.map((module) => (
+            modules?.map((module: Module) => (
               <div
                 onClick={() => setSelectedModule(module)}
-                key={module.moduleName}
+                key={module.modulName}
               >
                 <DashCard classNames="mt-6 cursor-pointer">
-                  <h1 className="pb-4">Modulo 1: {module.moduleName}</h1>
+                  <h1 className="pb-4">Modulo 1: {module.modulName}</h1>
                   <DashCard>
                     <Accordion selectionMode="multiple">
-                      {/* {module.lessons.map((lesson) => (
-                        <AccordionItem key={lesson.title} title={lesson.title}>
-                          <p>{lesson.description}</p>
-                        </AccordionItem>
-                      ))} */}
-                      <p>a</p>
+                      {module.lessons ? (
+                        module.lessons?.map((lesson: Lesson) => (
+                          <AccordionItem
+                            key={lesson.lessonTitle}
+                            title={lesson.lessonTitle}
+                          >
+                            <p>{lesson.lessonDescription}</p>
+                          </AccordionItem>
+                        ))
+                      ) : (
+                        <AccordionItem title="No hay lecciones cargadas"></AccordionItem>
+                      )}
                     </Accordion>
                   </DashCard>
                 </DashCard>

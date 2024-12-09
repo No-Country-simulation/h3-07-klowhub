@@ -26,8 +26,9 @@ export interface Lesson {
   lessonImage: string;
 }
 export interface Module {
-  moduleName: string;
-  moduleDescription: string;
+  modulName: string;
+  modulDescription: string;
+  lessons?: Lesson[];
 }
 
 export interface Inputs {
@@ -67,15 +68,12 @@ const NewCourseForm = () => {
   const [lessonTitle, setLessonTitle] = useState<string>("");
   const [lessonDescription, setLessonDescription] = useState("");
   const [videoUrl, setVideoUrl] = useState<string>();
-  const [pdfUrl, setPdfUrl] = useState<File[]>([]);
+  const [pdfUrl, setPdfUrl] = useState<string>();
   const [modules, setModules] = useState<Module[]>([]);
-  const [selectedModule, setSelectedModule] = useState({
-    moduleName: "",
-    moduleDescription: "",
-  });
+  const [selectedModule, setSelectedModule] = useState<Module | null>();
   const [errorMessage, setErrorMessage] = useState<string>();
   const [addingNewLesson, setAddingNewLesson] = useState(false);
-  const [success, setSuccess] = useState<boolean>(true);
+  const [success, setSuccess] = useState<boolean>(false);
   const [newCourseId, setNewCourseId] = useState<number>();
   const [submitButton, setSubmitButton] = useState<
     "button" | "submit" | "reset" | undefined
@@ -122,7 +120,7 @@ const NewCourseForm = () => {
           functionalities: watch("functionalities").split(" "),
           benefits: watch("benefits").split(" "),
           sectorId: parseInt(watch("sectorId")),
-          coursePrice: watch("coursePrice"),
+          coursePrice: parseInt(watch("coursePrice").toString()) || 0,
           detailedDescription: [""],
           coverImageUrl:
             "https://cdn.elearningindustry.com/wp-content/uploads/2020/12/how-to-improve-your-elearning-course-cover-design-768x431.png",
@@ -154,6 +152,7 @@ const NewCourseForm = () => {
   const onSubmit = async (data: Inputs, e?: React.BaseSyntheticEvent) => {
     e?.preventDefault();
   };
+  console.log(selectedModule);
   const handleSaveModule = async () => {
     if (!addingNewLesson) {
       /* const newModule: Module = {
@@ -163,23 +162,33 @@ const NewCourseForm = () => {
       setModules([
         ...modules,
         {
-          moduleName: moduleName,
-          moduleDescription: moduleDescription,
+          modulName: moduleName,
+          modulDescription: moduleDescription,
+          lessons: [
+            {
+              lessonTitle,
+              lessonDescription,
+              lessonVideo: videoUrl || "",
+              lessonImage: "",
+            },
+          ],
         },
       ]);
       const newModuleId = await newModule({
         id: newCourseId!,
-        data: {
-          moduleName: moduleName,
-          moduleDescription: moduleDescription,
-        },
+        data: [
+          {
+            modulName: moduleName,
+            modulDescription: moduleDescription,
+          },
+        ],
       });
       setSelectedModule(newModuleId?.data);
       setValue("course", modules);
       setEditing(false);
     } else {
       const moduleToModify = modules.find(
-        (module) => module.moduleName === selectedModule?.moduleName
+        (module) => module.modulName === selectedModule?.modulName
       );
       if (moduleToModify) {
         const newLesson: Lesson = {
@@ -188,10 +197,10 @@ const NewCourseForm = () => {
           lessonVideo: videoUrl || "",
           lessonImage: "",
         };
-
+        moduleToModify.lessons?.push(newLesson);
         setModules(
           modules.map((m) =>
-            m.moduleName === moduleToModify.moduleName ? moduleToModify : m
+            m.modulName === moduleToModify.modulName ? moduleToModify : m
           )
         );
         setValue("course", modules);
@@ -471,8 +480,8 @@ const NewCourseForm = () => {
               editing={editing}
               lessonTitle={lessonTitle}
               lessonDescription={lessonDescription}
-              lessonPdfUrl={pdfUrl}
-              lessonVideoUrl={videoUrl}
+              lessonPdfUrl={pdfUrl || ""}
+              lessonVideoUrl={videoUrl || " "}
               selectedModule={selectedModule}
               setEditing={setEditing}
               setSelectedModule={setSelectedModule}
