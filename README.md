@@ -43,11 +43,11 @@ KlowHub es una plataforma SaaS diseñada para ser el núcleo de la comunidad glo
 2. Instalar Backend:
 	```bash
 	cd backend
-	...
+	npm install
 	```
 3. Ejecutar Backend:
 	```bash
-	...
+	npm run start
 	```
 
 ## Tecnologías Utilizadas
@@ -59,7 +59,6 @@ KlowHub es una plataforma SaaS diseñada para ser el núcleo de la comunidad glo
 ![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
 ## Enlaces
-- Documentación de calidad
-- Enlace a figma 
-- deploy 
-- video
+- [Documentacion del Proyecto](https://drive.google.com/drive/folders/1VS_tkIHEUlnzE-xc6P1G86VXfOMyb3QT?usp=drive_link)
+- [Figma](https://www.figma.com/board/pC714J1fs4SJpusPuYaiMj/Flujo-Plataforma-KlowHub)
+- [Deploy](http://34.176.237.13/) 
