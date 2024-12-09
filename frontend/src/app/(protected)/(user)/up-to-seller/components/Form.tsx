@@ -60,7 +60,7 @@ const SellerUpgradeForm = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const router = useRouter();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const newData = { ...data, idImageFront: "", idImageBack: "" };
+    const newData = { ...data, idFront: "", idBack: "" };
     try {
       const respuesta = await upgradeUser(newData);
       if (respuesta.data.statusCode < 400) {
