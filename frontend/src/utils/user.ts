@@ -26,8 +26,10 @@ export const upgradeUser = async (data: Inputs) => {
       sellerType: data.sellerType,
       portfolioWebLink: data.portfolio,
       receivePayments: data.preferedPaymentMethod,
-      idImageFront: "",
-      idImageBack: "",
+      idImageFront:
+        "https://postman.com/_aether-assets/illustrations/light/illustration-hit-send.svg",
+      idImageBack:
+        "https://postman.com/_aether-assets/illustrations/light/illustration-hit-send.svg",
     },
     {
       headers: {
