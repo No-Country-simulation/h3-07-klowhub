@@ -71,7 +71,8 @@ const SellerUpgradeForm = () => {
       if (error instanceof AxiosError) {
         const axiosError = error as AxiosError;
         if (axiosError.status === 500) {
-          alert("Error al actualizar el usuario. Usuario ya es vendedor");
+          setSuccess(true);
+          //alert("Error al actualizar el usuario. Usuario ya es vendedor");
         }
       }
     }
