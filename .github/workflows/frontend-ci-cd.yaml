@@ -16,7 +16,6 @@ jobs:
       - name: Set Up git
         uses: actions/checkout@v4
 
-
       # Step 2, setup BUN
       - name: Set Up BUN
         uses: oven-sh/setup-bun@v2
@@ -41,7 +40,20 @@ jobs:
           cp ~/proyect/h3-07-klowhub/frontend/.env .
           bun run build
 
-      # Step 5: Deploy
+      # Step 5, save the build folder
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: next-build
+          path: .next/ # Save the .next directory as an artifact
+
+      # Step 6, Download the build folder
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: next-build # Download the .next directory
+
+      # Step 7: Deploy
       - name: Deploy
         run: |
           # Start frontend service
