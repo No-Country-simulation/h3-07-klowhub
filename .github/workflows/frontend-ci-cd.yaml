@@ -49,11 +49,9 @@ jobs:
       #   with:
       #     name: next-build # Download the .next directory
 
-  deploy:
-    runs-on: self-hosted
-    steps:
-      # Step 1: Deploy
+      # Step 5: Deploy
       - name: Deploy
         run: |
           # Start frontend service
+          sleep 40
           sudo systemctl start klowhub-front.service
