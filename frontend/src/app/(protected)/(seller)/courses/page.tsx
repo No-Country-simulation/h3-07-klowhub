@@ -3,6 +3,7 @@ import Breadcrumb from "@/components/layout/components/Breadcrumb";
 import { getCourses } from "@/utils/courses/courses";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
+import CourseCard from "./components/CourseCard";
 
 const page = async () => {
   const courses = await getCourses();
@@ -33,14 +34,7 @@ const page = async () => {
                   id: number;
                   courseName: string;
                   courseDescription: string;
-                }) => (
-                  <DashCard key={course.id} classNames="h-[200px]">
-                    <h2 className="mb-6 font-bold">{course.courseName}</h2>
-                    <p className="text-sm font-semibold">
-                      {course.courseDescription}
-                    </p>
-                  </DashCard>
-                )
+                }) => <CourseCard key={course.id} course={course} />
               )}
           </section>
         </DashCard>

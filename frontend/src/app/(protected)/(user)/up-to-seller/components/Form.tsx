@@ -21,7 +21,8 @@ import Divider from "@/components/divider/Divider";
 import Image from "next/image";
 import { upgradeUser } from "@/utils/user";
 import { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
+
+import { logout } from "@/stores/userSlice";
 
 export type Inputs = {
   name: string;
@@ -58,11 +59,13 @@ const SellerUpgradeForm = () => {
   });
   const [step, setStep] = useState<steps>(steps.suscriptiontype);
   const [success, setSuccess] = useState<boolean>(false);
-  const router = useRouter();
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
       const respuesta = await upgradeUser(data);
-      if (respuesta.data.statusCode < 400) {
+      console.log(respuesta.status);
+
+      if (respuesta.status === 201) {
         setSuccess(true);
       } else {
         alert("Error al actualizar el usuario");
@@ -621,7 +624,8 @@ const SellerUpgradeForm = () => {
                 <p className="text-xs">
                   Gracias por suscribirte al plan starter. Ahora tienes acceso
                   al uso de plantillas predefinidas. ¡Empieza a explorar todas
-                  las ventajas hoy mismo!
+                  las ventajas hoy mismo! Cierra sesión y vuelve a ingresar con
+                  tus credenciales
                 </p>
                 <Image
                   src="/assets/icons/success.png"
@@ -636,11 +640,11 @@ const SellerUpgradeForm = () => {
                   variant="solid"
                   onPress={() => {
                     onClose();
-                    router.push("/seller-dashboard");
+                    logout();
                   }}
                   className="min-w-80 bg-primario500 text-white"
                 >
-                  Acceder al Dashboard
+                  Cerrar sesión como Explorador
                 </Button>
                 <Button
                   variant="bordered"
