@@ -5,17 +5,18 @@ import CardSection from "@/components/common/CardSection";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center gap-5 my-10" >
-
+    <div className="flex flex-col items-center justify-center gap-5 my-10 text-white">
       <CardSection
         title="Continuá tu aprendizaje"
         description="Retomá donde lo dejaste. Volvé a ver tu último video y seguí aprendiendo sin perder el ritmo."
         button={false}
+        className="text-white"
       >
         <ProgressCard />
       </CardSection>
 
       <CardSection
+        className="text-white"
         title="Cursos recomendados"
         description="Descubre los cursos más destacados y lleva tus habilidades al siguiente nivel. Aprende de expertos y aplica tus conocimientos en proyectos reales."
       >
@@ -24,6 +25,7 @@ export default function Home() {
       </CardSection>
 
       <CardSection
+        className="text-white"
         title="Aplicaciones recomendadas"
         description="Explorá soluciones listas para usar. Encontrá la app perfecta para tu proyecto y empezá a trabajar de inmediato."
       >
@@ -32,14 +34,11 @@ export default function Home() {
         <CardShop isFor="app" />
       </CardSection>
 
-      <CardSection
-        button={false}
-      >
+      <CardSection button={false}>
         <CardShopConnect />
         <CardShopConnect platform="Power Apps" />
         <CardShopConnect />
       </CardSection>
-
-    </div >
+    </div>
   );
 }

@@ -35,9 +35,11 @@ const Login = () => {
   const [loginError, setLoginError] = useState<string>("");
   const router = useRouter();
   useEffect(() => {
-    if (isAuthenticated && user) {
-      const redirectPath = getRedirectPath(user.role);
-      router.replace(redirectPath);
+    if (isAuthenticated) {
+      if (user) {
+        const redirectPath = getRedirectPath(user.role);
+        router.replace(redirectPath);
+      }
     }
   }, [isAuthenticated, user, router]);
   const onSubmit = handleSubmit(async (data) => {

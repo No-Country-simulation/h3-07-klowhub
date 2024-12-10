@@ -4,31 +4,55 @@ import DashCard from "@/components/cards/DashCard";
 import FormNavigator from "@/components/form/FormNavigator";
 import { Button } from "@nextui-org/button";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import UploadFileInput from "../../(user)/up-to-seller/components/UploadFileInput";
+import ModulesAndLessons from "./ModulesAndLessons";
+import Promotions from "./Promotions";
+import { newCourse, newModule } from "@/utils/courses/courses";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+
+export interface Lesson {
+  lessonTitle: string;
+  lessonDescription: string;
+  lessonVideo: string;
+  lessonImage: string;
+}
+export interface Module {
+  modulName: string;
+  modulDescription: string;
+  lessons?: Lesson[];
+}
 
 export interface Inputs {
   courseName: string;
   period: boolean;
   courseType: string;
   courseDescription: string;
-  coursePrice: string;
+  coursePrice: number;
   courseLevel: string;
   platform: string;
   language: string;
   pilar: string;
-  hashtags: string[];
+  course: Module[];
+  hashtags: string;
   contentTypes: string;
   requirements: string;
-  tools: string[];
-  functionalities: string[];
+  tools: string;
+  functionalities: string;
   whatYouWillLearn: string;
-  benefits: string[];
+  benefits: string;
   coverImageUrl: string;
-  sector: {
-    id: number;
-    name: string;
-  };
+  sectorId: string;
+  promotion: boolean;
+  discount: string;
 }
 export enum steps {
   "general",
@@ -37,13 +61,155 @@ export enum steps {
   "promociones",
 }
 const NewCourseForm = () => {
-  const [step, setStep] = useState<steps>(steps.detalles);
-  const { register, handleSubmit } = useForm<Inputs>({
+  const [step, setStep] = useState<steps>(steps.general);
+  const [editing, setEditing] = useState(true);
+  const [moduleName, setModuleTitle] = useState<string>("");
+  const [moduleDescription, setModuleDescription] = useState<string>("");
+  const [lessonTitle, setLessonTitle] = useState<string>("");
+  const [lessonDescription, setLessonDescription] = useState("");
+  const [videoUrl, setVideoUrl] = useState<string>();
+  const [pdfUrl, setPdfUrl] = useState<string>();
+  const [modules, setModules] = useState<Module[]>([]);
+  const [selectedModule, setSelectedModule] = useState<Module | null>();
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [addingNewLesson, setAddingNewLesson] = useState(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [newCourseId, setNewCourseId] = useState<number>();
+  const [submitButton, setSubmitButton] = useState<
+    "button" | "submit" | "reset" | undefined
+  >("button");
+
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>({
     defaultValues: {},
   });
-  const onSubmit = (data: Inputs) => {
-    console.log(data);
+  useEffect(() => {
+    if (step === steps.promociones) {
+      setSubmitButton("submit");
+    } else {
+      setSubmitButton("button");
+    }
+    return () => {};
+  }, [step]);
+
+  const handleStepUp = async () => {
+    switch (step) {
+      case steps.general:
+        setStep(steps.detalles);
+        break;
+      case steps.detalles:
+        const dataToSend = {
+          courseName: watch("courseName"),
+          courseType: watch("courseType"),
+          courseDescription: watch("courseDescription"),
+          courseLevel: watch("courseLevel"),
+          pilar: watch("pilar"),
+          requirements: watch("requirements"),
+          whatYouWillLearn: watch("whatYouWillLearn"),
+          contentTypes: watch("contentTypes"),
+          platform: watch("platform"),
+          language: "Spanish",
+          tools: watch("tools").split(" "),
+          hashtags: watch("hashtags").split(" "),
+          functionalities: watch("functionalities").split(" "),
+          benefits: watch("benefits").split(" "),
+          sectorId: parseInt(watch("sectorId")),
+          coursePrice: parseInt(watch("coursePrice").toString()) || 0,
+          detailedDescription: [""],
+          coverImageUrl:
+            "https://cdn.elearningindustry.com/wp-content/uploads/2020/12/how-to-improve-your-elearning-course-cover-design-768x431.png",
+        };
+        try {
+          const respuesta = await newCourse(dataToSend);
+          if (respuesta?.status === 201) {
+            setNewCourseId(respuesta.data.id);
+            setStep(steps.modulosyLecciones);
+          }
+          console.log(respuesta?.status);
+
+          if (respuesta?.status === 400) {
+            setErrorMessage(
+              "Controle de rellenar todos los campos correctamente"
+            );
+          }
+        } catch (error) {
+          console.log(error);
+        }
+        break;
+      case steps.modulosyLecciones:
+        setStep(steps.promociones);
+        break;
+      case steps.promociones:
+        setSuccess(true);
+    }
   };
+  const onSubmit = async (data: Inputs, e?: React.BaseSyntheticEvent) => {
+    e?.preventDefault();
+  };
+  console.log(selectedModule);
+  const handleSaveModule = async () => {
+    if (!addingNewLesson) {
+      /* const newModule: Module = {
+        moduleName: moduleName,
+        moduleDescription: moduleDescription,
+      }; */
+      setModules([
+        ...modules,
+        {
+          modulName: moduleName,
+          modulDescription: moduleDescription,
+          lessons: [
+            {
+              lessonTitle,
+              lessonDescription,
+              lessonVideo: videoUrl || "",
+              lessonImage: "",
+            },
+          ],
+        },
+      ]);
+      const newModuleId = await newModule({
+        id: newCourseId!,
+        data: [
+          {
+            modulName: moduleName,
+            modulDescription: moduleDescription,
+          },
+        ],
+      });
+      setSelectedModule(newModuleId?.data);
+      setValue("course", modules);
+      setEditing(false);
+    } else {
+      const moduleToModify = modules.find(
+        (module) => module.modulName === selectedModule?.modulName
+      );
+      if (moduleToModify) {
+        const newLesson: Lesson = {
+          lessonTitle,
+          lessonDescription,
+          lessonVideo: videoUrl || "",
+          lessonImage: "",
+        };
+        moduleToModify.lessons?.push(newLesson);
+        setModules(
+          modules.map((m) =>
+            m.modulName === moduleToModify.modulName ? moduleToModify : m
+          )
+        );
+        setValue("course", modules);
+        setEditing(false);
+        setAddingNewLesson(false);
+      }
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="pb-5">
       <FormNavigator step={step} setStep={setStep} />
@@ -54,7 +220,7 @@ const NewCourseForm = () => {
             <div className="flex flex-col gap-4">
               <label htmlFor="courseName">Título del curso/lección</label>
               <input
-                {...register}
+                {...register("courseName")}
                 name="courseName"
                 id="title"
                 type="text"
@@ -79,15 +245,22 @@ const NewCourseForm = () => {
               <div>
                 <p>¿Qué tipo de contenido estás ofreciendo?</p>
                 <div className="flex gap-4 my-4">
-                  <input {...register} type="radio" name="period" id="free" />
+                  <input
+                    {...register("coursePrice")}
+                    type="radio"
+                    name="coursePrice"
+                    id="free"
+                    value={0}
+                  />
                   <label htmlFor="free">Contenido gratuito</label>
                 </div>
                 <div className="flex gap-4 my-4">
                   <input
-                    {...register}
+                    {...register("coursePrice")}
                     type="radio"
-                    name="period"
+                    name="coursePrice"
                     id="premium"
+                    value={10}
                   />
                   <label htmlFor="premium">Contenido pago</label>
                 </div>
@@ -96,19 +269,21 @@ const NewCourseForm = () => {
                 <p>Selecciona si vas a crear un curso o una lección</p>
                 <div className="flex gap-4 my-4">
                   <input
-                    {...register}
+                    {...register("courseType")}
                     type="radio"
                     name="courseType"
                     id="course"
+                    value="course"
                   />
                   <label htmlFor="course">Curso</label>
                 </div>
                 <div className="flex gap-4 my-4">
                   <input
-                    {...register}
+                    {...register("courseType")}
                     type="radio"
                     name="courseType"
                     id="lesson"
+                    value="lesson"
                   />
                   <label htmlFor="lesson">Lección</label>
                 </div>
@@ -116,9 +291,8 @@ const NewCourseForm = () => {
             </div>
             <div className="my-10">
               <p>Contá de qué trata, en no más de 3 líneas</p>
-              <input
-                {...register}
-                type="text-area"
+              <textarea
+                {...register("courseDescription")}
                 name="courseDescription"
                 className="rounded-lg my-2 h-40 w-full"
                 id="courseDescription"
@@ -129,19 +303,21 @@ const NewCourseForm = () => {
                 <p>Nivel de competencia</p>
                 <div className="flex gap-4">
                   <input
-                    {...register}
+                    {...register("courseLevel")}
                     type="radio"
                     name="courseLevel"
                     id="basic"
+                    value="beginner"
                   />
                   <label htmlFor="courseLevel">Básico</label>
                 </div>
                 <div className="flex gap-4">
                   <input
-                    {...register}
+                    {...register("courseLevel")}
                     type="radio"
                     name="courseLevel"
                     id="Intermedio"
+                    value="intermediate"
                   />
                   <label htmlFor="courseLevel">Intermedio</label>
                 </div>
@@ -149,11 +325,23 @@ const NewCourseForm = () => {
               <div>
                 <p>Plataforma</p>
                 <div className="flex gap-4">
-                  <input type="radio" name="platform" id="AppSheet" />
+                  <input
+                    {...register("platform")}
+                    type="radio"
+                    name="platform"
+                    id="AppSheet"
+                    value="AppSheet"
+                  />
                   <label htmlFor="courseLevel">AppSheet</label>
                 </div>
                 <div className="flex gap-4">
-                  <input type="radio" name="platform" id="PowerApps" />
+                  <input
+                    {...register("platform")}
+                    type="radio"
+                    name="platform"
+                    id="PowerApps"
+                    value="PowerApps"
+                  />
                   <label htmlFor="courseLevel">PowerApps</label>
                 </div>
               </div>
@@ -162,7 +350,7 @@ const NewCourseForm = () => {
                   <label>Elige el idioma del curso</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("language")}
                     type="text"
                     name="language"
                     id="language"
@@ -171,54 +359,54 @@ const NewCourseForm = () => {
                 <div>
                   <label>Elige el sector al que deseas dirigir el curso</label>
                   <select
-                    {...register}
-                    name="sector"
-                    className="w-full rounded-lg h-11 my-6"
-                    id="language"
+                    {...register("sectorId")}
+                    name="sectorId"
+                    className="w-full rounded-lg h-11 my-6 text-black px-2"
+                    id="sectorId"
                   >
-                    <option value="1">Tecnologia</option>
-                    <option value="2">Programación</option>
-                    <option value="3">Inteligencia Artificial</option>
+                    <option value={1}>Tecnología</option>
+                    <option value={2}>Programación</option>
+                    <option value={3}>Inteligencia Artificial</option>
                   </select>
                 </div>
                 <div>
                   <label>Define el contenido del curso</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("pilar")}
                     type="text"
-                    name="contentTypes"
-                    id="language"
+                    name="pilar"
+                    id="pilar"
                   />
                 </div>
                 <div>
                   <label>Herramientas y plataformas</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("tools")}
                     type="text"
                     name="tools"
-                    id="language"
+                    id="tools"
                   />
                 </div>
                 <div>
                   <label>Funcionalidades</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("functionalities")}
                     type="text"
                     name="functionalities"
-                    id="language"
+                    id="functionalities"
                   />
                 </div>
                 <div>
                   <label>Agrega etiquetas relacionadas</label>
                   <input
                     className="w-full rounded-lg h-11 my-6"
-                    {...register}
+                    {...register("hashtags")}
                     type="text"
                     name="hashtags"
-                    id="language"
+                    id="hastags"
                   />
                 </div>
               </div>
@@ -232,41 +420,84 @@ const NewCourseForm = () => {
                   Decinos qué van a aprender tus estudiantes al finalizar el
                   curso.
                 </label>
-                <input
-                  {...register}
-                  type="text-area"
+                <textarea
+                  {...register("whatYouWillLearn")}
                   name="whatYouWillLearn"
                   id="whatYouWillLearn"
                   className="w-full h-40 rounded-lg my-6"
                 />
+                {errors.whatYouWillLearn?.message}
               </div>
               <div>
-                <label htmlFor="whatYouWillLearn">Requisitos previos</label>
-                <input
-                  {...register}
-                  type="text-area"
+                <label htmlFor="requirements">Requisitos previos</label>
+                <textarea
+                  {...register("requirements")}
                   name="requirements"
                   id="requirements"
                   className="w-full h-40 rounded-lg my-6"
                 />
               </div>
               <div>
-                <label htmlFor="whatYouWillLearn">
+                <label htmlFor="benefits">
                   Hacé una descripción detallada del contenido y de los
                   beneficios que ofrece.
                 </label>
-                <input
-                  {...register}
-                  type="text-area"
+                <textarea
+                  {...register("benefits")}
                   name="benefits"
                   id="benefits"
                   className="w-full h-40 rounded-lg my-6"
                 />
               </div>
+              <div className="flex flex-col gap-4">
+                <label htmlFor="coverImageUrl" className="py-6">
+                  Subí una imagen que represente tu curso de manera atractiva
+                  para utilizarla de portada
+                </label>
+                <UploadFileInput
+                  fieldName="coverImageUrl"
+                  detalleImagen="portada de tu video"
+                  setValue={setValue}
+                />
+              </div>
+              {errorMessage && (
+                <div className="w-full text-center col-span-2">
+                  <p className="text-sm text-red-500 ">{errorMessage}</p>
+                </div>
+              )}
             </section>
           )
         )}
-
+        {step === steps.modulosyLecciones && (
+          <section>
+            <ModulesAndLessons
+              addingNewLesson={addingNewLesson}
+              setAddingNewLesson={setAddingNewLesson}
+              modules={modules}
+              handleSaveModule={handleSaveModule}
+              setModuleTitle={setModuleTitle}
+              setValue={setValue}
+              editing={editing}
+              lessonTitle={lessonTitle}
+              lessonDescription={lessonDescription}
+              lessonPdfUrl={pdfUrl || ""}
+              lessonVideoUrl={videoUrl || " "}
+              selectedModule={selectedModule}
+              setEditing={setEditing}
+              setSelectedModule={setSelectedModule}
+              setLessonTitle={setLessonTitle}
+              setLessonVideoUrl={setVideoUrl}
+              setLessonPdfUrl={setPdfUrl}
+              setLessonDescription={setLessonDescription}
+              setModuleDescription={setModuleDescription}
+            />
+          </section>
+        )}
+        {step === steps.promociones && (
+          <section>
+            <Promotions combine={watch("promotion")} setValue={setValue} />
+          </section>
+        )}
         <section>
           <AdminCard>
             <div className="relative col-span-1 max-h-[250px] w-full">
@@ -294,11 +525,58 @@ const NewCourseForm = () => {
         <Button
           variant="solid"
           className="bg-primario500 text-white px-16 rounded-lg hover:bg-primario300"
-          onClick={() => setStep(steps.detalles)}
+          onClick={handleStepUp}
+          type={submitButton}
         >
           Continuar
         </Button>
       </div>
+      <Modal isOpen={success} onOpenChange={setSuccess} placement="center">
+        <ModalContent className="bg-[#1F2937] px-14 py-16 text-center  max-w-[600px]">
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 font-bold">
+                ¡Felicitaciones! Tu {watch("courseType")} se publicó con éxito
+              </ModalHeader>
+              <ModalBody className="items-center">
+                <p className="text-xs">
+                  Ya está disponible para que estudiantes de todo el mundo lo
+                  descubran y aprovechen.
+                </p>
+                <Image
+                  src="/assets/icons/success.png"
+                  alt="success-icon"
+                  width={100}
+                  height={100}
+                  className="pt-6"
+                />
+              </ModalBody>
+              <ModalFooter className="flex flex-col items-center">
+                <Button
+                  variant="solid"
+                  onPress={() => {
+                    onClose();
+                    router.push(`/courses/${newCourseId}`);
+                  }}
+                  className="min-w-80 bg-primario500 text-white"
+                >
+                  Vista previa
+                </Button>
+                <Button
+                  variant="bordered"
+                  onPress={() => {
+                    onClose();
+                    router.push("/seller-dashboard");
+                  }}
+                  className="min-w-80 border-primario400 text-primario400"
+                >
+                  Volver al dashboard
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </form>
   );
 };

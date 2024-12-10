@@ -10,13 +10,12 @@ import { useRouter } from "next/navigation";
 export default function HeaderClient() {
   const { user, logout } = useAuth();
   const [mounted, setMounted] = useState(false);
-  const [isCreatorMode, setIsCreatorMode] = useState(() =>
-    user?.role === "seller" ? true : false
-  );
+  const [isCreatorMode, setIsCreatorMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
+
   const menuAdministrador = [
-    { url: "/dashboard", text: "Dasboard" },
+    { url: "/dashboard", text: "Dashboard" },
     { url: "/usuarios-y-contenido", text: "Gestión de usuarios y contenido" },
     { url: "/configuracion", text: "Configuración" },
     { url: "/estadisticas", text: "Transacciones y estadísticas" },
@@ -24,7 +23,7 @@ export default function HeaderClient() {
     { url: "/soporte", text: "Soporte" },
   ];
   const menuExplorador = [
-    { url: "/user-dashboard", text: "Dasboard" },
+    { url: "/user-dashboard", text: "Dashboard" },
     { url: "/cursos-y-lecciones", text: "Cursos y lecciones" },
     { url: "/appstore", text: "Appstore" },
     { url: "/proyectos", text: "Proyectos" },
@@ -32,51 +31,49 @@ export default function HeaderClient() {
     { url: "/sobre", text: "Sobre KlowHub" },
   ];
   const menuCreador = [
-    { url: "/creador", text: "Dasboard" },
+    { url: "/seller-dashboard", text: "Dashboard" },
     { url: "/creador/creador", text: "Ganancias" },
     { url: "/creador/creador", text: "Mis productos" },
     { url: "/creador/creador", text: "Ver proyectos disponibles" },
   ];
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-  const handleRedirect = () => {
-    router.push("/profile");
-  };
+
   useEffect(() => {
     setMounted(true);
-  }, []);
+    setIsCreatorMode(user?.role === "seller");
+  }, [user]);
+
   const getCurrentMenu = () => {
-    switch (user?.role) {
+    if (!user) return menuExplorador;
+    switch (user.role) {
       case "admin":
         return menuAdministrador;
-      case "user":
-        return menuExplorador;
       case "seller":
         return isCreatorMode ? menuCreador : menuExplorador;
       default:
         return menuExplorador;
     }
   };
+
   const handleUserMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (user?.role === "user") {
-      // Prevent the checkbox from changing state
       event.preventDefault();
-      openModal();
+      setIsModalOpen(true);
       return;
     }
     setIsCreatorMode(event.target.checked);
   };
-  const handleInputClick = (event: React.MouseEvent<HTMLInputElement>) => {
-    if (user?.role === "user") {
-      event.preventDefault();
-      openModal();
-      return;
-    }
-  };
 
   const handleLogout = () => {
     logout();
+    setTimeout(() => {
+      router.push("/");
+    }, 2000);
   };
+
+  if (!mounted) {
+    return null; // or a loading placeholder
+  }
+
   return (
     <>
       <Modal
@@ -91,19 +88,14 @@ export default function HeaderClient() {
           </p>
         </div>
         <div className="flex w-full justify-end gap-5 mt-6">
-          <Button
-            type="button"
-            onClick={() => {
-              closeModal();
-            }}
-          >
+          <Button type="button" onClick={() => setIsModalOpen(false)}>
             Cerrar
           </Button>
           <Button
             type="button"
             onClick={() => {
               router.push("/up-to-seller");
-              closeModal();
+              setIsModalOpen(false);
             }}
             className="bg-primario400 text-white hover:bg-primario600"
           >
@@ -111,7 +103,6 @@ export default function HeaderClient() {
           </Button>
         </div>
       </Modal>
-      {/* Navigation links */}{" "}
       <nav className="flex gap-2 xl:gap-6 items-center z-10">
         <Image
           src="/assets/icons/klowhub.png"
@@ -121,25 +112,12 @@ export default function HeaderClient() {
           className="text-xs"
         />
         <NavLink url="#" text="Home" />
-        {!mounted ? (
-          <div className="flex gap-2 xl:gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="h-6 w-24 bg-gray-200 animate-pulse rounded"
-              />
-            ))}
-          </div>
-        ) : (
-          getCurrentMenu().map((menu) => (
-            <NavLink key={menu.text} url={menu.url} text={menu.text} />
-          ))
-        )}
+        {getCurrentMenu().map((menu) => (
+          <NavLink key={menu.text} url={menu.url} text={menu.text} />
+        ))}
       </nav>
       <div className="flex gap-8 pr-10 xl:text-base text-sm items-center z-10">
         <section className="flex gap-4">
-          {" "}
-          {/**CREAR LOS BUDGES */}
           <svg
             width="20"
             height="20"
@@ -209,16 +187,13 @@ export default function HeaderClient() {
         </section>
         {user?.role !== "admin" && (
           <section className="flex gap-4 flex-grow items-center">
-            {mounted && (
-              <p>{user?.role === "seller" ? "Creador" : "Explorador"}</p>
-            )}
+            <p>{user?.role === "seller" ? "Creador" : "Explorador"}</p>
             <div className="flex items-center">
               <input
                 className="react-switch-checkbox"
                 type="checkbox"
                 id="UserMode"
                 onChange={handleUserMode}
-                onClick={handleInputClick}
                 checked={isCreatorMode}
               />
               <label htmlFor="UserMode" className="react-switch-label">
@@ -229,14 +204,13 @@ export default function HeaderClient() {
         )}
         <section className="cursor-pointer relative group">
           <Image
-            onClick={handleRedirect}
-            src={"/assets/avatars/foto1.png"}
+            onClick={() => router.push("/profile")}
+            src={user?.profileImage || "/assets/avatars/foto1.png"}
             alt="Avatar"
             width={40}
             height={40}
             className="rounded-full hover:shadow-lg"
           />
-
           <div className="opacity-0 group-hover:opacity-100 hover:opacity-100 absolute top-12 -right-2 bg-white p-2 rounded-md shadow-md text-sm transition-opacity duration-400">
             <p className="text-black" onClick={handleLogout}>
               Logout

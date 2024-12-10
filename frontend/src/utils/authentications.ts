@@ -1,11 +1,13 @@
+"use server";
 import axios from "axios";
 import { FieldValues } from "react-hook-form";
 import Cookies from "js-cookie";
+import { cookies } from "next/headers";
 
 export const registerUser = async (datos: FieldValues) => {
   try {
     const respuesta = await axios.post(
-      "https://klowhub.onrender.com/api/auth",
+      `${process.env.NEXT_PUBLIC_API_ROOT}/auth/register`,
       {
         username: datos.name,
         password: datos.password,
@@ -35,7 +37,7 @@ export const registerUser = async (datos: FieldValues) => {
 export const loginUser = async (datos: FieldValues) => {
   try {
     const response = await axios.post(
-      "https://klowhub.onrender.com/api/auth/login",
+      `${process.env.NEXT_PUBLIC_API_ROOT}/auth/login`,
       {
         email: datos.email,
         password: datos.password,
@@ -60,4 +62,10 @@ export const loginUser = async (datos: FieldValues) => {
     console.error("Error during login:", error);
     throw error;
   }
+};
+
+export const getServerSideToken = async () => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth_token");
+  return token?.value;
 };

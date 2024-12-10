@@ -5,23 +5,7 @@ export class CreateModulDto {
   @IsString()
   modulName: string;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Description is required' })
   @IsString()
-  modulDescription?: string;
-
-  @IsOptional()
-  @IsString()
-  lessonTitle?: string;
-
-  @IsOptional()
-  @IsString()
-  lessonDescription?: string;
-
-  @IsOptional()
-  @IsString()
-  lessonContent?: string;
-
-  @IsOptional()
-  @IsString()
-  lessonVideo?: string;
+  modulDescription: string;
 }

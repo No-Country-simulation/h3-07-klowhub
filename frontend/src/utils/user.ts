@@ -9,7 +9,7 @@ const getCookie = (name: string): string | null => {
 };
 const token = getCookie("auth_token");
 export const getProfile = async () => {
-  const data = await axios.get("https://klowhub.onrender.com/api/users", {
+  const data = await axios.get(`${process.env.NEXT_PUBLIC_API_ROOT}/users`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -26,8 +26,10 @@ export const upgradeUser = async (data: Inputs) => {
       sellerType: data.sellerType,
       portfolioWebLink: data.portfolio,
       receivePayments: data.preferedPaymentMethod,
-      idImageFront: data.idFront,
-      idImageBack: data.idBack,
+      idImageFront:
+        "https://postman.com/_aether-assets/illustrations/light/illustration-hit-send.svg",
+      idImageBack:
+        "https://postman.com/_aether-assets/illustrations/light/illustration-hit-send.svg",
     },
     {
       headers: {

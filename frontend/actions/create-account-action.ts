@@ -1,4 +1,4 @@
-"use server";
+/* "use server";
 
 import { registerSchema } from "@/schemas";
 
@@ -37,3 +37,4 @@ export async function registerFn(formData: FormData) {
   const json = await req.json();
   console.log(json);
 }
+ */

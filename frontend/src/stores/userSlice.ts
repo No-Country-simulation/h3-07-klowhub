@@ -1,7 +1,6 @@
 // src/store/features/auth/authSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { setCookies, clearCookies, getUserFromCookies } from "@/utils/cookies";
-import { redirect } from "next/navigation";
 
 interface User {
   access_token: string;
@@ -9,6 +8,7 @@ interface User {
   role: "user" | "seller" | "admin" | "superadmin";
   username: string;
   _id: string;
+  profileImage: string;
 }
 interface AuthState {
   isAuthenticated: boolean;
@@ -47,7 +47,6 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       // Clear cookies when logging out
       clearCookies();
-      redirect("/login");
     },
   },
 });

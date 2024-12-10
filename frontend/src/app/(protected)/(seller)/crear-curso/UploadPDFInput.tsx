@@ -1,19 +1,18 @@
 "use client";
 import { UseFormSetValue } from "react-hook-form";
-import UploadIcon from "./UploadIcon";
+
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { HandleImageUpload } from "@/utils/fileHandle";
+import UploadIcon from "../../(user)/up-to-seller/components/UploadIcon";
 
 interface UploadFileInputProps {
-  detalleImagen: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setValue: UseFormSetValue<any>;
   fieldName: string;
   error?: string;
 }
-const UploadFileInput = ({
-  detalleImagen,
+const UploadPDFFileInput = ({
   setValue,
   fieldName,
   error,
@@ -44,7 +43,7 @@ const UploadFileInput = ({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "image/jpeg": [".jpg", ".jpeg"] },
+    accept: { "application/pdf": [".pdf"] },
     maxFiles: 1,
     multiple: false,
   });
@@ -69,13 +68,13 @@ const UploadFileInput = ({
         >
           {isUploaded
             ? "¡Imagen cargada correctamente!"
-            : `Sube una foto clara de la ${detalleImagen}`}
+            : `Sube un archivo PDF como material complementario`}
         </p>
         <p className="font-medium text-xs text-center pt-2">
           {isDragActive
             ? "Suelta el archivo aquí"
             : isUploaded
-            ? "Puedes subir otra imagen"
+            ? "Puedes subir otra archivo"
             : "Arrastre o haga click aqui para subir los archivos"}
         </p>
       </div>
@@ -84,4 +83,4 @@ const UploadFileInput = ({
   );
 };
 
-export default UploadFileInput;
+export default UploadPDFFileInput;

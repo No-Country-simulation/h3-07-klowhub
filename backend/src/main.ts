@@ -20,7 +20,11 @@ async function bootstrap() {
 
   app.enableCors({
     credentials: true,
-    origin: ['http://localhost:3000', 'http://34.176.237.13'],
+    origin: [
+      'http://localhost:3000',
+      'http://34.176.237.13',
+      'http://localhost:3001',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
   });
@@ -31,6 +35,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 8000);
 }
 bootstrap();
