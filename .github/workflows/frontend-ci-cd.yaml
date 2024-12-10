@@ -28,28 +28,19 @@ jobs:
           cd frontend/
           bun install
 
-      # Step 4: Build
+      # Step 4: Stop frontend service
       - name: Build
         run: |
           sudo systemctl stop klowhub-front.service
-          # Stop frontend service
+
+      # Step 5: Build Frontend
+      - name: Build
+        run: |
+          cd frontend
           cp ~/proyect/h3-07-klowhub/frontend/.env .
           bun run build
 
-      # # Step 5, save the build folder
-      # - name: Upload Build Artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: next-build
-      #     path: ./frontend/.next/ # Save the .next directory as an artifact
-      #
-      # # Step 6, Download the build folder
-      # - name: Download Build Artifacts
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: next-build # Download the .next directory
-
-      # Step 5: Deploy
+      # Step 6: Deploy
       - name: Deploy
         run: |
           # Start frontend service
