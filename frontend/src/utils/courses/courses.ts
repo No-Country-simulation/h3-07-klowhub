@@ -80,6 +80,26 @@ export const getCourses = async () => {
     console.log(error);
   }
 };
+export async function getCourseById(id: string) {
+  try {
+    const courses = await getCourses();
+    if (courses === undefined) {
+      throw new Error("No courses found");
+    } else {
+      const curso =
+        courses?.data?.find(
+          (course: { id: number }) => course.id === parseInt(id)
+        ) ?? null;
+      if (curso === null) {
+        throw new Error("No course found");
+      }
+      return curso;
+    }
+  } catch (error) {
+    console.error("Error fetching course:", error);
+    throw error;
+  }
+}
 
 export const newModule = async ({
   id,

@@ -9,9 +9,9 @@ export const COOKIE_NAMES = {
 } as const;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const setCookies = (userData: any, token: string) => {
+export const setCookies = (userData: any, token?: string) => {
   Cookies.set(COOKIE_NAMES.USER, JSON.stringify(userData), { expires: 7 }); // 7 days
-  Cookies.set(COOKIE_NAMES.TOKEN, token, { expires: 7 });
+  Cookies.set(COOKIE_NAMES.TOKEN, token || "", { expires: 7 });
   Cookies.set(COOKIE_NAMES.ROLE, userData.role, { expires: 7 });
   Cookies.set(COOKIE_NAMES.SESSION, userData._id, {
     expires: 7,

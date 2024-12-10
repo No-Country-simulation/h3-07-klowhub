@@ -38,5 +38,6 @@ export const upgradeUser = async (data: Inputs) => {
       },
     }
   );
+
   return result;
 };
