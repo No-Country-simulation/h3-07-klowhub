@@ -3,10 +3,10 @@ name: Build and Deploy NextJS Frontend
 on:
   push:
     branches:
-      - dev-front-rafa  # or any branch you want to trigger the workflow on
+      - main  # or any branch you want to trigger the workflow on
   pull_request:
     branches:
-      - dev-front-rafa
+      - main
 
 jobs:
   build-deploy:
