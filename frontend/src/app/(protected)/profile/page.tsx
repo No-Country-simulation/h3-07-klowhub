@@ -123,7 +123,7 @@ export default function ProfilePage() {
               <DashCard classNames="mt-4">
                 <div className="">
                   <h3 className="font-bold pb-2 text-sm sm:text-base">
-                    Sobre mi
+                    Sobre mi: (edit)
                   </h3>
                   <p className="font-normal text-xs sm:text-sm">
                     Con más de 8 años de experiencia en el desarrollo de

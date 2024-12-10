@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-deploy:
+  build:
     runs-on: self-hosted
     steps:
       # Sep 1, checkout the respository
@@ -25,17 +25,13 @@ jobs:
       # Step 3: Install Dependencies
       - name: Install Dependencies
         run: |
-          git status
-          pwd
           cd frontend/
           bun install
 
       # Step 4: Build
       - name: Build
         run: |
-          pwd
-          cd frontend/
-          sudo systemctl stop klowhub-front.service || true
+          sudo systemctl stop klowhub-front.service
           # Stop frontend service
           cp ~/proyect/h3-07-klowhub/frontend/.env .
           bun run build
@@ -53,8 +49,11 @@ jobs:
       #   with:
       #     name: next-build # Download the .next directory
 
-      # Step 7: Deploy
+  deploy:
+    runs-on: self-hosted
+    steps:
+      # Step 1: Deploy
       - name: Deploy
         run: |
           # Start frontend service
-          sudo systemctl start klowhub-front.service || true
+          sudo systemctl start klowhub-front.service
