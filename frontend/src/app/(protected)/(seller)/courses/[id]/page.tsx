@@ -5,9 +5,9 @@ import { getCourseById } from "@/utils/courses/courses";
 import Image from "next/image";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 const page = async ({ params }: PageProps) => {
   const { id } = await params;
