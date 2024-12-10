@@ -40,18 +40,18 @@ jobs:
           cp ~/proyect/h3-07-klowhub/frontend/.env .
           bun run build
 
-      # Step 5, save the build folder
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: next-build
-          path: ./frontend/.next/ # Save the .next directory as an artifact
-
-      # Step 6, Download the build folder
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: next-build # Download the .next directory
+      # # Step 5, save the build folder
+      # - name: Upload Build Artifacts
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: next-build
+      #     path: ./frontend/.next/ # Save the .next directory as an artifact
+      #
+      # # Step 6, Download the build folder
+      # - name: Download Build Artifacts
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: next-build # Download the .next directory
 
       # Step 7: Deploy
       - name: Deploy
