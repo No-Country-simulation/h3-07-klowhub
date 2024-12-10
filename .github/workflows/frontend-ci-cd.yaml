@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: next-build
-          path: .next/ # Save the .next directory as an artifact
+          path: ./frontend/.next/ # Save the .next directory as an artifact
 
       # Step 6, Download the build folder
       - name: Download Build Artifacts
